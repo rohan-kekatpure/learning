@@ -1,0 +1,35 @@
+{
+
+  "manifest_version": 2,
+  "name": "Borderify",
+  "version": "1.0",
+
+  "description": "Adds a red border to all webpages matching mozilla.org.",
+
+  "icons": {
+    "48": "icons/einstein_1.jpg"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.wayfair.com/*"],
+      "js": ["borderify.js"]
+    }
+  ],
+
+  "applications": {
+  "gecko": {
+    "id": "borderify@example.com"
+    }
+  },
+
+  "sidebar_action": {
+    "default_icon": {
+      "48": "button/einstein_1.jpg"      
+    },
+    "default_title": "My sidebar",
+    "default_panel": "sidebar/sidebar.html",
+    "open_at_install":true
+  }    
+
+}

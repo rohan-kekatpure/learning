@@ -1,0 +1,26 @@
+h1, h2, h3 {
+    color: #FFFFFF;
+}
+
+body {
+  min-width: 900px; 
+  max-width: 100%;
+  position: relative;
+  vertical-align:middle;
+  background-color: #2752AF;
+}
+
+#container {
+  width: 90%;
+  background-color: #2752AF;
+  display: inline-block;
+}
+
+.block {
+  height: 128px;
+  width: 128px;
+  background-color: #fff;
+  margin: 5px;
+  float: left;
+}
+

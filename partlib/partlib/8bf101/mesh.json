@@ -1,0 +1,34 @@
+{
+    "name": "top",
+    "id": "8bf101",
+    "sockets": {
+        "sock_corner": {
+            "count": 4, 
+            "names": [
+                "8bf101_sock_corner_0.000",
+                "8bf101_sock_corner_1.000",
+                "8bf101_sock_corner_2.000",
+                "8bf101_sock_corner_3.000"
+            ]
+        },
+
+        "sock_side": {
+            "count": 4, 
+            "names": [
+                "8bf101_sock_side_0.000",
+                "8bf101_sock_side_1.000",
+                "8bf101_sock_side_2.000",
+                "8bf101_sock_side_3.000"
+            ]
+        },
+
+        "sock_center": {
+            "count": 1,
+            "names": [
+                "8bf101_sock_center_0.000"
+            ]
+        }
+    },
+
+    "plugs": {}
+}

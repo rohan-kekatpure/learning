@@ -1,0 +1,18 @@
+{
+    "name": "subtop",
+    "id": "e0c670",
+    "sockets": {        
+        "count": 4,
+        "names": [
+            "e0c670_sock_0.000", 
+            "e0c670_sock_1.000", 
+            "e0c670_sock_2.000", 
+            "e0c670_sock_3.000"
+        ]            
+    },
+
+    "plugs": {
+        "count": 1,
+        "names": ["e0c670_plug_0.000"]
+    }
+}
