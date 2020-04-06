@@ -1,0 +1,116 @@
+{
+  "globalSettings": {
+    "calibrationMode": "TwoVanishingPoints",
+    "imageOpacity": 1,
+    "overlay3DGuide": "None"
+  },
+
+  "calibrationSettingsBase": {
+    "referenceDistanceAxis": null,
+    "referenceDistance": 4,
+    "referenceDistanceUnit": "Meters",
+    "cameraData": {
+      "presetId": null,
+      "presetData": null,
+      "customSensorWidth": 36,
+      "customSensorHeight": 24
+    },
+    "firstVanishingPointAxis": "xPositive",
+    "secondVanishingPointAxis": "yPositive"
+  },
+
+  "calibrationSettings1VP": {
+    "principalPointMode": "Default",
+    "absoluteFocalLength": 18
+  },
+
+  "calibrationSettings2VP": {
+    "principalPointMode": "Default",
+    "quadModeEnabled": false
+  },
+
+  "controlPointsStateBase": {
+    "principalPoint": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "referenceDistanceAnchor": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "referenceDistanceHandleOffsets": [
+      0.0,
+      0.0
+    ],
+    "firstVanishingPoint": {
+      "lineSegments": [
+        [
+          {
+            "x": 0.9983016351492019,
+            "y": 0.7174076452145155
+          },
+          {
+            "x": 0.7659727402845247,
+            "y": 0.5451035741295285
+          }
+        ],
+        [
+          {
+            "x": 0.9983508992597733,
+            "y": 0.15864328355670554
+          },
+          {
+            "x": 0.7662521324890124,
+            "y": 0.29570487043949245
+          }
+        ]
+      ]
+    }
+  },
+
+
+  "controlPointsState1VP": {
+    "horizon": {
+      "0": {
+        "x": 0.571875,
+        "y": 0.25535168195718655
+      },
+      "1": {
+        "x": 0.57265625,
+        "y": 0.6284403669724771
+      }
+    }
+  },
+
+
+  "controlPointsState2VP": {
+    "secondVanishingPoint": {
+      "lineSegments": [
+        [
+          {
+            "x": 0.5727950962325962,
+            "y": 0.6259123265874812
+          },
+          {
+            "x": 0.7278184700263504,
+            "y": 0.6285061496419866
+          }
+        ],
+        [
+          {
+            "x": 0.5728795556920556,
+            "y": 0.2563174150319183
+          },
+          {
+            "x": 0.7284511926699425,
+            "y": 0.25826506460778154
+          }
+        ]
+      ]
+    }
+  }
+}
