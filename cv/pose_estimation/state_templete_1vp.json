@@ -1,0 +1,114 @@
+{
+  "globalSettings": {
+    "calibrationMode": "OneVanishingPoint",
+    "imageOpacity": 1,
+    "overlay3DGuide": "None"
+  },
+  "calibrationSettingsBase": {
+    "referenceDistanceAxis": null,
+    "referenceDistance": 4,
+    "referenceDistanceUnit": "Meters",
+    "cameraData": {
+      "presetId": null,
+      "presetData": null,
+      "customSensorWidth": 36,
+      "customSensorHeight": 24
+    },
+    "firstVanishingPointAxis": "xPositive",
+    "secondVanishingPointAxis": "zPositive"
+  },
+  "calibrationSettings1VP": {
+    "principalPointMode": "Default",
+    "absoluteFocalLength": 24
+  },
+  "calibrationSettings2VP": {
+    "principalPointMode": "Default",
+    "quadModeEnabled": false
+  },
+  "controlPointsStateBase": {
+    "principalPoint": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "referenceDistanceAnchor": {
+      "x": 0.0,
+      "y": 0.0
+    },
+    "referenceDistanceHandleOffsets": [
+      0.0,
+      0.0
+    ],
+    "firstVanishingPoint": {
+      "lineSegments": [
+        [
+          {
+            "x": -1,
+            "y": -1
+          },
+          {
+            "x": -1,
+            "y": -1
+          }
+        ],
+        [
+          {
+            "x": -1,
+            "y": -1
+          },
+          {
+            "x": -1,
+            "y": -1
+          }
+        ]
+      ]
+    }
+  },
+  "controlPointsState1VP": {
+    "horizon": {
+      "0": {
+        "x": 0.5,
+        "y": 0.25
+      },
+      "1": {
+        "x": 0.5,
+        "y": 0.75
+      }
+    }
+  },
+  "controlPointsState2VP": {
+    "secondVanishingPoint": {
+      "lineSegments": [
+        [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.0,
+            "y": 0.0
+          }
+        ],
+        [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.0,
+            "y": 0.0
+          }
+        ]
+      ]
+    }
+  },
+  "resultDisplaySettings": {
+    "orientationFormat": "AxisAngleDegrees",
+    "principalPointFormat": "Absolute",
+    "fieldOfViewFormat": "Degrees",
+    "displayAbsoluteFocalLength": false
+  }
+}
