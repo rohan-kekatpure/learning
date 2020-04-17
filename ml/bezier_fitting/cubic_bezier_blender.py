@@ -56,8 +56,6 @@ def bz_eval(bz_curves):
     """
     Bezier curve evaluation by chaining multiple bezier curves
     :param bz_curves: list, list of bezier curves, (bezier curve = 4x2 array of control points)
-    :param splits: list, array indices of segment beginnings and end points.
-                   E.g. i'th segment is between t[splits[i]] and t[splits[i + 1]]
     """
     X = np.array([], dtype=np.float)
     Y = np.array([], dtype=np.float)
@@ -66,7 +64,6 @@ def bz_eval(bz_curves):
         x, y = bz_eval_single(bz_curves[i], t).T
         X = np.hstack((X, x))
         Y = np.hstack((Y, y))
-
     return np.column_stack((X, Y))
 
 
@@ -127,7 +124,7 @@ def create_bezier(bz_curve):
 
 
 if __name__ == '__main__':
-    img = cv2.imread('./img/mirror.png')
+    img = cv2.imread('./img/base1.jpg')
     rz = get_rz(img)
     max_error = 1
     rz_approx = cv2.approxPolyDP(rz.astype(int), max_error, closed=False)[:, 0, :]
@@ -139,4 +136,4 @@ if __name__ == '__main__':
     z_fit, r_fit = bz_eval(bz).T
 
     # Create Blender bezier curve
-    create_bezier(bz)
+    # create_bezier(bz)

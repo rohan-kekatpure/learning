@@ -2,7 +2,7 @@ import numpy as np
 import bpy
 import bmesh
 from bmesh.ops import spin
-import bpy_aarwild_280 as A
+import aarwild_bpy.funcs as A
 import os
 
 # Global constants
