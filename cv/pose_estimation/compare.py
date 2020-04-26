@@ -1,7 +1,7 @@
 import json
-from IPython import embed
 from aarwild_utils.qds.solver import compute_camera_parameters as ccp_fspy
 from aarwild_utils.pose import compute_camera_parameters as ccp_awld
+# from pose import compute_camera_parameters as ccp_awld
 import numpy as np
 import sys
 import cv2
@@ -17,16 +17,18 @@ ccp_fspy(orig_img_path, segm_img_path)
 with open('_camera_params.json') as f:
     dct = json.load(f)
 
-params_fspy = np.array(dct['cameraParameters']['cameraTransform']['rows'])
-segm_img = cv2.imread(segm_img_path)
-params_awld = ccp_awld(segm_img)
+try:
+    params_fspy = np.array(dct['cameraParameters']['cameraTransform']['rows'])
+except:
+    params_fspy = None
 
+segm_img = cv2.imread(segm_img_path)
+params_awld = ccp_awld(segm_img, save_scene_visual=True)
 
 print('\nfspy:')
 print('=' * 40)
 print(params_fspy)
 print('\naarwild:')
 print('=' * 40)
-print(params_awld)
-
-# embed()
+print(params_awld[0])
+print('-' * 40)
