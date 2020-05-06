@@ -1,0 +1,200 @@
+{
+  "globalSettings": {
+    "calibrationMode": "OneVanishingPoint",
+    "imageOpacity": 1,
+    "overlay3DGuide": "None"
+  },
+  "calibrationSettingsBase": {
+    "referenceDistanceAxis": null,
+    "referenceDistance": 4,
+    "referenceDistanceUnit": "Meters",
+    "cameraData": {
+      "presetId": null,
+      "presetData": null,
+      "customSensorWidth": 36,
+      "customSensorHeight": 24
+    },
+    "firstVanishingPointAxis": "xPositive",
+    "secondVanishingPointAxis": "yPositive"
+  },
+  "calibrationSettings1VP": {
+    "principalPointMode": "Default",
+    "absoluteFocalLength": 24
+  },
+  "calibrationSettings2VP": {
+    "principalPointMode": "Default",
+    "quadModeEnabled": false
+  },
+  "controlPointsStateBase": {
+    "principalPoint": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "referenceDistanceAnchor": {
+      "x": 0.0,
+      "y": 0.0
+    },
+    "referenceDistanceHandleOffsets": [
+      0.0,
+      0.0
+    ],
+    "firstVanishingPoint": {
+      "lineSegments": [
+        [
+          {
+            "x": 0.25,
+            "y": 0.19119951316766676
+          },
+          {
+            "x": 0.75,
+            "y": 0.6633717167195458
+          }
+        ],
+        [
+          {
+            "x": 0.25,
+            "y": 0.6736989650144471
+          },
+          {
+            "x": 0.75,
+            "y": 0.40923476187946584
+          }
+        ]
+      ]
+    }
+  },
+  "controlPointsState1VP": {
+    "horizon": {
+      "0": {
+        "x": 0.25,
+        "y": 0.5
+      },
+      "1": {
+        "x": 0.75,
+        "y": 0.5
+      }
+    }
+  },
+  "controlPointsState2VP": {
+    "secondVanishingPoint": {
+      "lineSegments": [
+        [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.0,
+            "y": 0.0
+          }
+        ],
+        [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.0,
+            "y": 0.0
+          }
+        ]
+      ]
+    }
+  },
+  "resultDisplaySettings": {
+    "orientationFormat": "AxisAngleDegrees",
+    "principalPointFormat": "Absolute",
+    "fieldOfViewFormat": "Degrees",
+    "displayAbsoluteFocalLength": false
+  },
+  "cameraParameters": {
+    "principalPoint": {
+      "x": 0,
+      "y": 0
+    },
+    "viewTransform": {
+      "rows": [
+        [
+          0.11547495876764487,
+          -0.9933103915179841,
+          0,
+          0
+        ],
+        [
+          -0.00039724239516567765,
+          -4.618047852335047e-05,
+          0.9999999200329183,
+          0
+        ],
+        [
+          -0.9933103120858507,
+          -0.11547494953344939,
+          -0.000399917687922915,
+          -10
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    "cameraTransform": {
+      "rows": [
+        [
+          0.11547495876764485,
+          -0.00039724239516567765,
+          -0.9933103120858507,
+          -9.933103120858508
+        ],
+        [
+          -0.9933103915179841,
+          -4.6180478523350476e-05,
+          -0.1154749495334494,
+          -1.1547494953344941
+        ],
+        [
+          0,
+          0.9999999200329183,
+          -0.000399917687922915,
+          -0.0039991768792291505
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    "horizontalFieldOfView": 1.2870022175865687,
+    "verticalFieldOfView": 0.7984415391505051,
+    "vanishingPoints": [
+      {
+        "x": 0.15500353697816638,
+        "y": -0.0005332236265375573
+      },
+      {
+        "x": -11.469274164728445,
+        "y": -0.0005332236265375573
+      },
+      {
+        "x": 0,
+        "y": 3334.0191418779173
+      }
+    ],
+    "vanishingPointAxes": [
+      "xPositive",
+      "yPositive",
+      "zPositive"
+    ],
+    "relativeFocalLength": 1.3333333333333333,
+    "imageWidth": 1024,
+    "imageHeight": 576
+  }
+}
