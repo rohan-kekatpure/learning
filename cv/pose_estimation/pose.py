@@ -7,6 +7,7 @@ import cv2
 
 EPS = 1e-9
 np.set_printoptions(threshold=np.inf, floatmode='fixed', precision=5, suppress=True)
+np.random.seed(0)
 
 # Ordering of wall types is important for the logic in this code
 WALL_TYPES = ['LEFT', 'RIGHT', 'CEIL', 'FLOOR', 'FRONT']
@@ -40,7 +41,7 @@ Point = namedtuple('Point', ['x', 'y'])
 
 DEFAULT_VP1 = Point(1, -0.15)
 DEFAULT_VP2 = Point(-1.8, -0.15)
-DEFAULT_FOCAL_LENGTH = 1.333  # Iphone
+DEFAULT_FOCAL_LENGTH = 1.3333333333333333
 
 
 class Line(dict):
@@ -431,6 +432,7 @@ def _compute_scene(segmented_img):
     H, W = img.shape[:2]
     scene = dict.fromkeys(['img_size'] + WALL_TYPES)
     scene['img_size'] = {'height': H, 'width': W}
+    scene['vanishing_points'] = None
     for i, wall_type in enumerate(WALL_TYPES):
         wall_data = dict.fromkeys(['present', 'frac', 'line1', 'line2', 'vp'])
         scene[wall_type] = wall_data
@@ -469,6 +471,7 @@ def _compute_scene(segmented_img):
         if len(hull) > 0:
             wall_data['present'] = True
             line1, line2, vp = _compute_vp_from_poly4(hull, wall_type)
+            vp = _px2img(vp, W, H)  # Convert VP to image coordinates [-1, 1] x [-1, 1]
             wall_data['line1'] = line1
             wall_data['line2'] = line2
             wall_data['vp'] = vp
@@ -528,7 +531,7 @@ def _px2img(point, image_width, image_height):
     if a < 1.:  # [0, 1], [0, 1] -> [-a, a] x [-1, 1]
         u = a * (2 * x - 1)
         v = 1 - 2 * y
-    else:
+    else:  # [0, 1], [0, 1] -> [-1, 1] x [-1/a, 1/a]
         u = 2 * x - 1
         v = (1 - 2 * y) / a
 
@@ -610,7 +613,7 @@ def _align_to_axes(M, vp_mode):
     yn90 = ROT.from_rotvec([0, -np.pi / 2, 0]).as_matrix()
     zn90 = ROT.from_rotvec([0, 0, -np.pi / 2]).as_matrix()
 
-    M = x180 @ M
+    M = z180 @ M @ z180
 
     return M
 
@@ -623,23 +626,21 @@ def _compute_rot_matrix(vp1, vp2, principal_point, focal_length):
 
 
 def compute_camera_parameters(segmented_img, save_scene_visual=False):
-    H, W = segmented_img.shape[:2]
     scene = _compute_scene(segmented_img)
     vp_mode, vp_walls = _assign_vp_mode(scene)
-    # principal_point = _px2img(Point(W // 2, H // 2), W, H)
     principal_point = Point(0, 0)
 
     # Assign vp1, vp2 and focal length
     confidence = 0.0
     if vp_mode == '2vp':
         wall1, wall2 = vp_walls
-        vp1 = _px2img(scene[wall1]['vp'], W, H)
-        vp2 = _px2img(scene[wall2]['vp'], W, H)
+        vp1 = scene[wall1]['vp']
+        vp2 = scene[wall2]['vp']
         focal_len = _compute_focal_length(vp1, vp2, principal_point)
         confidence = min(scene[wall1]['confidence'], scene[wall2]['confidence'])
     elif vp_mode == '1vp':
         wall = vp_walls[0]
-        vp1 = _px2img(scene[wall]['vp'], W, H)
+        vp1 = scene[wall]['vp']
         focal_len = DEFAULT_FOCAL_LENGTH
         vp2 = _compute_vp2(vp1, principal_point, focal_len)
         print(vp2)
@@ -652,6 +653,7 @@ def compute_camera_parameters(segmented_img, save_scene_visual=False):
     else:
         raise ValueError('Invalid vp_mode {}'.format(vp_mode))
 
+    scene['vanishing_points'] = [vp1, vp2]
     print('vp1 -> {}'.format(vp1))
     print('vp2 -> {}'.format(vp2))
     if confidence < 0.8:
@@ -661,8 +663,8 @@ def compute_camera_parameters(segmented_img, save_scene_visual=False):
 
     # Compute rotation matrix
     R = _compute_rot_matrix(vp1, vp2, principal_point, focal_len)
-    R = _align_to_axes(R, vp_mode)
     R = R.T.copy()
+    R = _align_to_axes(R, vp_mode)
 
     # Compute translation vector. In fSpy, this is simple 10 times the
     # third column of the rotation matrix. Thats what we'll be using
