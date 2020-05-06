@@ -29,11 +29,11 @@ with open('_camera_params.json') as f:
     dct = json.load(f)
 
 segm_img = cv2.imread(segm_img_path)
-M_awld, focal_len, scene = ccp_awld(segm_img, save_scene_visual=False)
+M_awld, focal_len, scene = ccp_awld(segm_img, save_scene_visual=True)
 
 headerprint('FOCAL LENGTH')
 print('fspy -> {}'.format(dct['cameraParameters']['relativeFocalLength']))
-print('\naarwild -> {}'.format(focal_len))
+print('aarwild -> {}'.format(focal_len))
 
 headerprint('VANISHING POINTS')
 print('fspy -> ')
@@ -52,7 +52,8 @@ print('\naarwild -> ')
 print(M_awld)
 
 headerprint('DIFFERENCE (A - F)')
-print(M_awld - M_fspy)
+print(M_awld[:3, :3] - M_fspy[:3, :3])
+
 headerprint('SIGN')
 sgn = np.sign(M_awld * M_fspy)[:3, :3].astype(int)
 print(sgn)

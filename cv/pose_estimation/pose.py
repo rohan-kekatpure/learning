@@ -432,7 +432,6 @@ def _compute_scene(segmented_img):
     H, W = img.shape[:2]
     scene = dict.fromkeys(['img_size'] + WALL_TYPES)
     scene['img_size'] = {'height': H, 'width': W}
-    scene['vanishing_points'] = None
     for i, wall_type in enumerate(WALL_TYPES):
         wall_data = dict.fromkeys(['present', 'frac', 'line1', 'line2', 'vp'])
         scene[wall_type] = wall_data
@@ -643,7 +642,6 @@ def compute_camera_parameters(segmented_img, save_scene_visual=False):
         vp1 = scene[wall]['vp']
         focal_len = DEFAULT_FOCAL_LENGTH
         vp2 = _compute_vp2(vp1, principal_point, focal_len)
-        print(vp2)
         confidence = scene[wall]['confidence']
     elif vp_mode == 'default':
         vp1 = DEFAULT_VP1
@@ -653,9 +651,8 @@ def compute_camera_parameters(segmented_img, save_scene_visual=False):
     else:
         raise ValueError('Invalid vp_mode {}'.format(vp_mode))
 
+    scene['vp_mode'] = vp_mode
     scene['vanishing_points'] = [vp1, vp2]
-    print('vp1 -> {}'.format(vp1))
-    print('vp2 -> {}'.format(vp2))
     if confidence < 0.8:
         vp1 = DEFAULT_VP1
         vp2 = DEFAULT_VP2
@@ -678,5 +675,4 @@ def compute_camera_parameters(segmented_img, save_scene_visual=False):
     if save_scene_visual:
         _visualize(segmented_img, scene)
 
-    print('vp_mode -> {}, confidence -> {:0.4f}'.format(vp_mode, confidence))
     return C, focal_len, scene
