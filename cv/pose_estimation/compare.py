@@ -3,8 +3,11 @@ import json
 from IPython import embed
 from aarwild_utils.qds.solver import compute_camera_parameters as ccp_fspy
 
-# from aarwild_utils.pose import compute_camera_parameters as ccp_awld
-from pose import compute_camera_parameters as ccp_awld
+from aarwild_utils.pose import compute_camera_parameters as ccp_awld
+from aarwild_utils.pose import _convert_to_axis_angle
+
+# from pose import compute_camera_parameters as ccp_awld
+
 import numpy as np
 import sys
 import cv2
@@ -57,4 +60,4 @@ print(M_awld[:3, :3] - M_fspy[:3, :3])
 headerprint('SIGN')
 sgn = np.sign(M_awld * M_fspy)[:3, :3].astype(int)
 print(sgn)
-# embed()
+embed()

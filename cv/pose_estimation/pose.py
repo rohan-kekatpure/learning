@@ -345,6 +345,7 @@ def _compute_scene(segmented_img):
 
     {
       "img_size": (1000, 1024),
+      "vanishing_points": [Point(...), Point(...)],
       "LEFT": {
         "present": true,
         "frac": 0.10804444444444444,
@@ -514,10 +515,60 @@ def _dist(p1, p2):
     dy = y2 - y1
     return np.sqrt(dx * dx + dy * dy)
 
+def _img2px(point, image_width, image_height):
+    """
+    Coordinate transformation from image plane coordinates to
+    pixel (Absolute) coordinates
+    [-a, a] x [-1, 1] -> [0, W] x [0, H] (tall image)
+    [-1, 1] x [-1/a, 1/a] -> [0, W] x [0, H] (wide image)
 
-def _px2img(point, image_width, image_height):
+    This is inverse of the transformation in _px2img()
+
+    In input coordinates,
+    x coordinate increases Left -> Right
+    y coordinate increases Top -> Bottom
+
+    In output coordinate
+    x coordinate increases Left -> Right
+    y coordinate increases Bottom -> Top
+    """
     W = float(image_width)
     H = float(image_height)
+    a = W / H
+    u, v = point
+
+    if a < 1.:  # [-a, a] x [-1, 1] -> [0, 1], [0, 1] (tall image)
+        x = 0.5 * (u / a + 1.)
+        y = 0.5 * (-v + 1.)
+    else:  # [-1, 1] x [-1/a, 1/a] -> [0, 1], [0, 1] (wide image)
+        x = 0.5 * (u + 1.)
+        y = 0.5 * (-a * v + 1)
+
+    # Convert relative coordinates to pixel (absolute) coords
+    x *= W
+    y *= H
+    return Point(x, y)
+
+def _px2img(point, image_width, image_height):
+    """
+    Coordinate transformation from pixel (absolute) coordinates to
+    image plane coordinates
+    [0, W] x [0, H] -> [-a, a] x [-1, 1] (wide image)
+    [0, W] x [0, H] -> [-1, 1] x [-1/a, 1/a] (tall image)
+
+    This is inverse of the transformation in _img2px()
+
+    In input coordinates,
+    x coordinate increases Left -> Right
+    y coordinate increases Top -> Bottom
+
+    In output coordinate
+    x coordinate increases Left -> Right
+    y coordinate increases Bottom -> Top
+    """
+    W = float(image_width)
+    H = float(image_height)
+    a = W / H
     x, y = point
 
     # Convert from absolute pixel coords to relative coords
@@ -526,7 +577,6 @@ def _px2img(point, image_width, image_height):
     y /= H
 
     # Convert from relative to image plane coords
-    a = W / H
     if a < 1.:  # [0, 1], [0, 1] -> [-a, a] x [-1, 1]
         u = a * (2 * x - 1)
         v = 1 - 2 * y
@@ -588,7 +638,7 @@ def _compute_focal_length(Fu, Fv, principal_point):
     return focal_len
 
 
-def _compute_vp2(vp1, principal_point, focal_length=DEFAULT_FOCAL_LENGTH):
+def _compute_vp2(vp1, focal_length=DEFAULT_FOCAL_LENGTH):
     horizon = (1, 0)
     f = focal_length
     Fu = vp1
@@ -600,7 +650,7 @@ def _compute_vp2(vp1, principal_point, focal_length=DEFAULT_FOCAL_LENGTH):
     return Fv
 
 
-def _align_to_axes(M, vp_mode):
+def _align_to_axes(M):
     # Transformation to match to fspy
     x180 = ROT.from_rotvec([np.pi, 0, 0]).as_matrix()
     y180 = ROT.from_rotvec([0, np.pi, 0]).as_matrix()
@@ -641,7 +691,7 @@ def compute_camera_parameters(segmented_img, save_scene_visual=False):
         wall = vp_walls[0]
         vp1 = scene[wall]['vp']
         focal_len = DEFAULT_FOCAL_LENGTH
-        vp2 = _compute_vp2(vp1, principal_point, focal_len)
+        vp2 = _compute_vp2(vp1, focal_len)
         confidence = scene[wall]['confidence']
     elif vp_mode == 'default':
         vp1 = DEFAULT_VP1
@@ -661,7 +711,7 @@ def compute_camera_parameters(segmented_img, save_scene_visual=False):
     # Compute rotation matrix
     R = _compute_rot_matrix(vp1, vp2, principal_point, focal_len)
     R = R.T.copy()
-    R = _align_to_axes(R, vp_mode)
+    R = _align_to_axes(R)
 
     # Compute translation vector. In fSpy, this is simple 10 times the
     # third column of the rotation matrix. Thats what we'll be using
