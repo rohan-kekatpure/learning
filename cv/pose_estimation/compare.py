@@ -1,17 +1,12 @@
 import json
 
 from IPython import embed
-from aarwild_utils.qds.solver import compute_camera_parameters as ccp_fspy
-
-from aarwild_utils.pose import compute_camera_parameters as ccp_awld
-from aarwild_utils.pose import _convert_to_axis_angle
-
-# from pose import compute_camera_parameters as ccp_awld
+from aarwild_quick_design.qds.solver import compute_camera_parameters as ccp_fspy
+from aarwild_quick_design.scene import Scene
 
 import numpy as np
 import sys
 import cv2
-from scipy.spatial.transform import Rotation as ROT
 
 def headerprint(str_):
     print('\n')
@@ -32,11 +27,12 @@ with open('_camera_params.json') as f:
     dct = json.load(f)
 
 segm_img = cv2.imread(segm_img_path)
-M_awld, focal_len, scene = ccp_awld(segm_img, save_scene_visual=True)
+scene = Scene(segm_img)
+scene.build()
 
 headerprint('FOCAL LENGTH')
 print('fspy -> {}'.format(dct['cameraParameters']['relativeFocalLength']))
-print('aarwild -> {}'.format(focal_len))
+print('aarwild -> {}'.format(scene.relative_focal_length))
 
 headerprint('VANISHING POINTS')
 print('fspy -> ')
@@ -44,10 +40,11 @@ for vp in dct['cameraParameters']['vanishingPoints']:
     print(vp)
 
 print('\naarwild -> ')
-for vp in scene['vanishing_points']:
+for vp in scene.vanishing_points:
     print(vp)
 
 headerprint('CAMERA MATRIX')
+M_awld = scene.camera_matrix
 print('fspy -> ')
 M_fspy = np.array(dct['cameraParameters']['cameraTransform']['rows'])
 print(M_fspy)
@@ -60,4 +57,5 @@ print(M_awld[:3, :3] - M_fspy[:3, :3])
 headerprint('SIGN')
 sgn = np.sign(M_awld * M_fspy)[:3, :3].astype(int)
 print(sgn)
+
 embed()

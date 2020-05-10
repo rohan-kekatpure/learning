@@ -1,12 +1,25 @@
-import json
+from pathlib import Path
 import numpy as np
 import cv2
 import matplotlib.pyplot as pl
 from IPython import embed
 from matplotlib.lines import Line2D
-from pose import _img2px, Point
+from aarwild_quick_design.mathutils import img_to_px, Point
+from aarwild_quick_design.scene import Scene
+import argparse
 
 np.set_printoptions(threshold=np.inf, floatmode='fixed', precision=2, suppress=True)
+
+def _process_args():
+    parser = argparse.ArgumentParser(description='Wall estimation')
+
+    parser.add_argument('-s', '--segmented-image', dest='segm_img_pth', action='store',
+                        help='Path to segmented image', required=True)
+
+    parser.add_argument('-i', '--orig-image', dest='orig_img_pth', action='store',
+                        help='path to original image', required=True)
+    args = parser.parse_args()
+    return args
 
 def draw_box(ax, points):
     x0, x1, x2, x3, x4, x5, x6, x7 = points[0, :]
@@ -14,17 +27,17 @@ def draw_box(ax, points):
     linestyle1 = '-'
     linestyle2 = '--'
     lines = [
-        Line2D([x0, x1], [y0, y1], color='r', linestyle=linestyle1),
+        Line2D([x0, x1], [y0, y1], color='r', linestyle=linestyle1, marker='*'),
         Line2D([x1, x2], [y1, y2], color='g', linestyle=linestyle1),
         Line2D([x2, x3], [y2, y3], color='r', linestyle=linestyle1),
-        Line2D([x3, x0], [y3, y0], color='g', linestyle=linestyle1),
+        Line2D([x3, x0], [y3, y0], color='g', linestyle=linestyle1, marker='*'),
 
         Line2D([x4, x5], [y4, y5], color='r', linestyle=linestyle2),
         Line2D([x5, x6], [y5, y6], color='g', linestyle=linestyle2),
         Line2D([x6, x7], [y6, y7], color='r', linestyle=linestyle2),
         Line2D([x7, x4], [y7, y4], color='g', linestyle=linestyle2),
 
-        Line2D([x0, x4], [y0, y4], color='b', linestyle=linestyle1),
+        Line2D([x0, x4], [y0, y4], color='b', linestyle=linestyle1, marker='*'),
         Line2D([x1, x5], [y1, y5], color='b', linestyle=linestyle1),
         Line2D([x2, x6], [y2, y6], color='b', linestyle=linestyle2),
         Line2D([x3, x7], [y3, y7], color='b', linestyle=linestyle2),
@@ -33,46 +46,44 @@ def draw_box(ax, points):
         ax.add_line(line)
 
 
-def get_cube2(origin, scale, camera_mtx, view_mtx, proj_mtx, img_width, img_height):
-    o, s = origin, scale
-    W, H = img_width, img_height
-    C, V, P = camera_mtx, view_mtx, proj_mtx
-
-    cube_w = np.array([
-        [0., 0., 0.],
-        [s[0], 0., 0.],
-        [s[0], s[1], 0.],
-        [0., s[1], 0.],
-        [0., 0., s[2]],
-        [s[0], 0., s[2]],
-        [s[0], s[1], s[2]],
-        [0., s[1], s[2]]
+def get_unit_cube(origin, scale):
+    cube_3d = np.array([
+        [-1., -1, -1],
+        [1., -1, -1],
+        [1., 1, -1],
+        [-1., 1, -1],
+        [-1., -1, 1],
+        [1., -1, 1],
+        [1., 1, 1],
+        [-1., 1, 1]
     ]).T
 
-    cube_w += o
-    cube_w = np.row_stack((cube_w, np.ones(cube_w.shape[1])))
+    cube_3d *= scale
+    cube_3d += origin
+    return cube_3d
 
-    cube_c = V @ cube_w
-    cube_p = P @ cube_c
-    cube_p /= cube_p[3, :]
+def _project(points_3d, view_matrix, focal_len, image_width, image_height):
+    V = view_matrix
+    P = _get_projection_matrix(focal_len)
+    W, H = image_width, image_height
+    points_4d = np.row_stack((points_3d, np.ones(points_3d.shape[1])))
 
-    # Cube in normalized image plane coords
-    cube_ip = cube_p[:2, :]
-
-    cube_px = np.zeros(cube_ip.shape)
+    points_cam = V @ points_4d
+    points_proj = P @ points_cam
+    points_proj /= points_proj[3, :]
+    cube_imgplane = points_proj[:2, :]
 
     # Convert to pixel coords
-    for i in range(cube_ip.shape[1]):
-        px = _img2px(Point(cube_ip[0, i], cube_ip[1, i]), img_width, img_height)
+    cube_px = np.zeros(cube_imgplane.shape)
+    for i in range(cube_imgplane.shape[1]):
+        px = img_to_px(Point(cube_imgplane[0, i], cube_imgplane[1, i]), W, H)
         cube_px[:, i] = [px.x, px.y]
 
     return cube_px
 
-
-def _get_proj_matrix(focal_len, image_width, image_height, sensor_width=36., sensor_height=24.):
-    # Defaults from Blender
+def _get_projection_matrix(focal_len):
     near = 0.01
-    far = 10.0
+    far = 10.
     f_rel = focal_len
     fov_x = 2. * np.arctan(1. / f_rel)
     s = 1. / np.tan(0.5 * fov_x)
@@ -88,32 +99,38 @@ def _get_proj_matrix(focal_len, image_width, image_height, sensor_width=36., sen
     return proj_mtx
 
 def main():
-    with open('_camera_params.json') as f:
-        params = json.load(f)['cameraParameters']
+    args = _process_args()
 
-    C = np.array(params['cameraTransform']['rows'])
-    V = np.array(params['viewTransform']['rows'])
-    print(V)
-    f_rel = params['relativeFocalLength']
+    segm_img_pth = Path(args.segm_img_pth)
+    orig_img_pth = Path(args.orig_img_pth)
+
+    if not segm_img_pth.exists():
+        print('Segmented image not found')
+        exit(1)
+
+    segm_img = cv2.imread(segm_img_pth.as_posix())
+    scene = Scene(segm_img)
+    scene.build()
+    f_rel = scene.relative_focal_length
+    V = scene.view_transform
     print('f_rel -> {}'.format(f_rel))
-    W = params['imageWidth']
-    H = params['imageHeight']
-
-    # Projection matrix
-    P = _get_proj_matrix(f_rel, W, H)
+    W = scene.image_data['width']
+    H = scene.image_data['height']
 
     # Create a cube in world coords
-    a = np.array([1, 1, 1]) * 16
-    o = np.array([[10, 4, -8.]]).T
-    cube = get_cube2(o, a, C, V, P, W, H)
+    o = np.array([[0., 0., -0.3]]).T
+    fov = 2 * np.arctan(1. / f_rel)
+    l = np.linalg.norm(V[:3, 3])
+    s = np.tan(0.5 * fov)
+    a = .4 * s * l
+    cube_3d = get_unit_cube(o, a)
+    cube_p = _project(cube_3d, V, f_rel, W, H)
 
     # Plotting
-    img = cv2.imread('scene17.png')
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img_rgb = cv2.cvtColor(segm_img, cv2.COLOR_BGR2RGB)
     fig, ax = pl.subplots(1, 1)
-    ax.imshow(img)
-    # pl.plot(cube[0, :], cube[1, :], '*')
-    draw_box(ax, cube)
+    ax.imshow(img_rgb)
+    draw_box(ax, cube_p)
     pl.show()
 
 
