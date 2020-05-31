@@ -13,7 +13,7 @@ aspect = float(H) / float(W)
 dst_size = 600, int(600 * aspect)
 img = cv2.resize(img, dst_size)
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-img_gray = cv2.Canny(img_gray, 100, 200, apertureSize=5, L2gradient=True)
+img_gray = cv2.Canny(img_gray, 100, 200, apertureSize=7, L2gradient=True)
 
 win_name = 'Tuner'
 cv2.namedWindow(win_name)

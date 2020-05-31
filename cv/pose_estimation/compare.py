@@ -1,12 +1,11 @@
 import json
-
-from IPython import embed
-from aarwild_quick_design.qds.solver import compute_camera_parameters as ccp_fspy
+from aarwild_quick_design.fspy import solve as solve_fspy
 from aarwild_quick_design.scene import Scene
-import aarwild_quick_design.vizutils as viz
+from aarwild_quick_design.vizutils import draw_vps
 import numpy as np
 import sys
 import cv2
+np.set_printoptions(threshold=np.inf, floatmode='fixed', precision=5, suppress=True)
 
 def headerprint(str_):
     print('\n')
@@ -22,14 +21,13 @@ if len(sys.argv) < 2:
 orig_img_path = sys.argv[1]
 segm_img_path = sys.argv[2]
 
-ccp_fspy(orig_img_path, segm_img_path)
+solve_fspy(orig_img_path, segm_img_path)
 with open('_camera_params.json') as f:
     dct = json.load(f)
 
 segm_img = cv2.imread(segm_img_path)
 scene = Scene(segm_img)
 scene.build()
-viz.draw_vps(scene)
 
 headerprint('FOCAL LENGTH')
 print('fspy -> {}'.format(dct['cameraParameters']['relativeFocalLength']))
@@ -59,4 +57,5 @@ headerprint('SIGN')
 sgn = np.sign(M_awld * M_fspy)[:3, :3].astype(int)
 print(sgn)
 
+draw_vps(scene)
 from IPython import embed; embed(); exit(0)
