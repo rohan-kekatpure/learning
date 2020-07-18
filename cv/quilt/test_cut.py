@@ -43,7 +43,7 @@ def carve(slice_img, slice_block):
 
     return new_slice, seam, cost
 
-def main():
+def test_vertical_cut():
     shape = r, c = (60, 10)
     dark = np.full(shape, 64, dtype=np.int)
     light = np.full(shape, 192, dtype=np.int)
@@ -64,7 +64,7 @@ def main():
     seam = np.column_stack((idx, cols))
     random_walk = np.random.randint(-1, 2, size=(r, 1)).cumsum()
     seam[:, 1] += random_walk
-    seam[:, 1] = seam[:, 1].clip(0, 9)
+    seam[:, 1] = seam[:, 1].clip(0, c - 1)
 
     # Make vales at the seam equal in both blocks
     block2[seam[:, 0], seam[:, 1], :] = 128
@@ -78,6 +78,44 @@ def main():
     pl.show(block=True)
     from IPython import embed; embed(); exit(0)
 
+def test_horiz_cut():
+    shape = r, c = (10, 60)
+    dark = np.full(shape, 64, dtype=np.int)
+    light = np.full(shape, 192, dtype=np.int)
+
+    # Create blocks
+    block1 = np.zeros((r, c, 3), dtype=np.int)
+    block2 = np.zeros((r, c, 3), dtype=np.int)
+    block1[:, :, 0] = dark
+    block1[:, :, 1] = dark
+    block1[:, :, 2] = dark
+    block2[:, :, 0] = light
+    block2[:, :, 1] = light
+    block2[:, :, 2] = light
+
+    # Create seam
+    idx = np.arange(0, c).reshape(1, -1)
+    cols = np.full((1, c), fill_value=r//2)
+    seam = np.row_stack((idx, cols))
+    random_walk = np.random.randint(-1, 2, size=(1, c)).cumsum()
+    seam[1, :] += random_walk
+    seam[1, :] = seam[1, :].clip(0, r - 1)
+
+    # Make vales at the seam equal in both blocks
+    block2[seam[1], seam[0], :] = 128
+
+    block1_r = np.rot90(block1)
+    block2_r = np.rot90(block2)
+    new_slice, seam, cost = carve(block1_r, block2_r)
+    new_slice = np.rot90(new_slice, -1)
+
+    fig, ax = pl.subplots(3, 1)
+    ax[0].imshow(block1, cmap='gray')
+    ax[1].imshow(block2, cmap='gray')
+    ax[2].imshow(new_slice, cmap='gray')
+    pl.show(block=True)
+    from IPython import embed; embed(); exit(0)
+
 
 if __name__ == '__main__':
-    main()
+    test_horiz_cut()
