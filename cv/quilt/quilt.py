@@ -195,9 +195,6 @@ def quilt(input_patch, block_size=54, output_texture_size_init=1000,
         for block_col in trange(num_blocks, leave=False, ncols=50, unit_scale=True):
             pJ = block_col * (b - s)
 
-            # Add block to random image (which is just being generated for comparison)
-            tex_random[pI: pI + b, pJ: pJ + b, :] = get_random_block(input_patch, b)
-
             # Synthesize next block of SSD image
             next_block = search(
                 tex_output,
@@ -215,38 +212,36 @@ def quilt(input_patch, block_size=54, output_texture_size_init=1000,
 
             tex_output[pI: pI + b, pJ: pJ + b, :] = next_block.pixels
 
-    return tex_output, tex_random
+    return tex_output
 
 
 def main():
 
     root = Path('samples')
     for patch_path in root.glob('*'):
-        print(patch_path)
         t1 = time.time()
         patch = cv2.imread(patch_path.as_posix())
-        init_block_size = 30
+        init_block_size = 54
         block_size = b = 6 * (init_block_size // 6)
         overlap_size = s = block_size // 6
         init_target_size = 500
         num_blocks = 1 + np.ceil((init_target_size - b) // (b - s))
         num_blocks = int(num_blocks)
         target_size = b + (num_blocks - 1) * (b - s)
+        print('patch: ', patch_path)
         print('target_size: ', target_size)
         print('block_size: ', block_size)
         print('overlap_size: ', overlap_size)
         print('num_blocks: ', num_blocks)
 
-        tex_proc, tex_rand = quilt(
+        tex_proc = quilt(
             patch, block_size, target_size, method='fuzzy',
             carve=True, fuzzy_search_threshold=0.3
         )
 
         output_root = Path('outputs')
         basename = patch_path.stem
-        rand_output_pth = output_root / (basename + '_random.jpg')
         proc_output_pth = output_root / (basename + '_processed.jpg')
-        cv2.imwrite(rand_output_pth.as_posix(), tex_rand)
         cv2.imwrite(proc_output_pth.as_posix(), tex_proc)
         print('Conversion took {} seconds'.format(time.time() - t1))
 
