@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as pl
 from scipy.integrate import simps
-
+from deepnet import deepnet_optimizer
 
 def generate_points(n_points):
     theta = np.linspace(-np.pi, np.pi, n_points)
@@ -26,6 +26,18 @@ def perimeter(r, theta):
 def area(r, theta):
     return simps(r * r, theta) / 2.0
 
+def save_image(r, theta, x0, y0, image_index, out_dir):
+    x1, y1 = pol2cart(r, theta)
+    pl.close('all')
+    _, ax = pl.subplots()
+    ax.plot(x0, y0, 'r-', lw=1)
+    ax.plot(x1, y1, 'g-', lw=1)
+    ax.set_xlim([-1.2, 1.2])
+    ax.set_ylim([-1.2, 1.2])
+    ax.set_aspect('equal', 'box')
+    pl.savefig('{}/image_{}.png'.format(out_dir, image_index))
+
+
 def hill_climbing(r, theta, n_iterations=1000, save_images=False):
     n_points = r.shape[0]
     constr_val = 2 * np.pi
@@ -42,15 +54,7 @@ def hill_climbing(r, theta, n_iterations=1000, save_images=False):
         r *= constr_val / new_perim
         new_area = area(r, theta)
         if save_images and (i % 10 == 0):
-            x1, y1 = pol2cart(r, theta)
-            pl.close('all')
-            _, ax = pl.subplots()
-            ax.plot(x0, y0, 'r-', lw=1)
-            ax.plot(x1, y1, 'g-', lw=1)
-            ax.set_xlim([-1.2, 1.2])
-            ax.set_ylim([-1.2, 1.2])
-            ax.set_aspect('equal', 'box')
-            pl.savefig('./img_hill_climbing/image_{}.png'.format(i))
+            save_image(r, theta, x0, y0, i, 'img_hill_climbing')
 
         if new_area > best_area:
             best_area = new_area
@@ -74,18 +78,9 @@ def gradient_descent(r, theta, learning_rate, reg_param, n_iterations=1000, save
         r *= constr_val / new_perim
 
         if save_images and (i % 5 == 0):
-            x1, y1 = pol2cart(r, theta)
-            pl.close('all')
-            _, ax = pl.subplots()
-            ax.plot(x0, y0, 'r-', lw=1)
-            ax.plot(x1, y1, 'g-', lw=1)
-            ax.set_xlim([-1.2, 1.2])
-            ax.set_ylim([-1.2, 1.2])
-            ax.set_aspect('equal', 'box')
-            pl.savefig('./img_gradient_descent/image_{}.png'.format(i))
+            save_image(r, theta, x0, y0, i, 'img_gradient_descent')
 
     return r, theta
-
 
 def main():
     r_, theta_ = generate_points(64)
@@ -93,12 +88,17 @@ def main():
     r_ *= (2 * np.pi) / P
     print(perimeter(r_, theta_), area(r_, theta_))
 
-    best_r, best_theta = hill_climbing(r_.copy(), theta_.copy(), n_iterations=25000, save_images=True)
-    print(perimeter(best_r, best_theta), area(best_r, best_theta))
-
-    best_r, best_theta = gradient_descent(r_.copy(), theta_.copy(), 0.01, 0.01, n_iterations=500, save_images=True)
-    print(perimeter(best_r, best_theta), area(best_r, best_theta))
-
+    # best_r, best_theta = hill_climbing(r_.copy(), theta_.copy(), n_iterations=25000,
+    #                                    save_images=True)
+    # print(perimeter(best_r, best_theta), area(best_r, best_theta))
+    #
+    # best_r, best_theta = gradient_descent(r_.copy(), theta_.copy(), 0.01,
+    #                                       0.01, n_iterations=500, save_images=True)
+    # print(perimeter(best_r, best_theta), area(best_r, best_theta))
+    #
+    best_r, best_theta = deepnet_optimizer(r_.copy(), theta_.copy(), 0.001,
+                                           1.0, 10000, save_images=True, save_every=10)
+    pl.close('all')
 
 if __name__ == '__main__':
     main()
