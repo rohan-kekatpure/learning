@@ -88,14 +88,14 @@ def main():
     r_ *= (2 * np.pi) / P
     print(perimeter(r_, theta_), area(r_, theta_))
 
-    # best_r, best_theta = hill_climbing(r_.copy(), theta_.copy(), n_iterations=25000,
-    #                                    save_images=True)
-    # print(perimeter(best_r, best_theta), area(best_r, best_theta))
-    #
-    # best_r, best_theta = gradient_descent(r_.copy(), theta_.copy(), 0.01,
-    #                                       0.01, n_iterations=500, save_images=True)
-    # print(perimeter(best_r, best_theta), area(best_r, best_theta))
-    #
+    best_r, best_theta = hill_climbing(r_.copy(), theta_.copy(), n_iterations=25000,
+                                       save_images=True)
+    print(perimeter(best_r, best_theta), area(best_r, best_theta))
+
+    best_r, best_theta = gradient_descent(r_.copy(), theta_.copy(), 0.01,
+                                          0.01, n_iterations=500, save_images=True)
+    print(perimeter(best_r, best_theta), area(best_r, best_theta))
+
     best_r, best_theta = deepnet_optimizer(r_.copy(), theta_.copy(), 0.001,
                                            1.0, 10000, save_images=True, save_every=10)
     pl.close('all')
