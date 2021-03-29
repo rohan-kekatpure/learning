@@ -50,22 +50,23 @@ class Generator(nn.Module):
             nn.ConvTranspose2d(NZ, NGF * 8, 4, 1, 0, bias=False),
             nn.BatchNorm2d(NGF * 8),
             nn.ReLU(True),
-            # state size. (ngf*8) x 4 x 4
+            # state size. 512 x 4 x 4
+
             nn.ConvTranspose2d(NGF * 8, NGF * 4, 4, 2, 1, bias=False),
             nn.BatchNorm2d(NGF * 4),
             nn.ReLU(True),
-            # state size. (ngf*4) x 8 x 8
+            # state size. 256 x 8 x 8
             nn.ConvTranspose2d(NGF * 4, NGF * 2, 4, 2, 1, bias=False),
             nn.BatchNorm2d(NGF * 2),
             nn.ReLU(True),
-            # state size. (ngf*2) x 16 x 16
+            # state size. 128 x 16 x 16
             nn.ConvTranspose2d(NGF * 2, NGF, 4, 2, 1, bias=False),
             nn.BatchNorm2d(NGF),
             nn.ReLU(True),
-            # state size. (ngf) x 32 x 32
+            # state size. 64 x 32 x 32
             nn.ConvTranspose2d(NGF, NC, 4, 2, 1, bias=False),
             nn.Tanh()
-            # state size. (nc) x 64 x 64
+            # state size. 3 x 64 x 64
         )
 
     def forward(self, input_):
@@ -81,18 +82,22 @@ class Discriminator(nn.Module):
             nn.Conv2d(NC, NDF, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf) x 32 x 32
+
             nn.Conv2d(NDF, NDF * 2, 4, 2, 1, bias=False),
             nn.BatchNorm2d(NDF * 2),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*2) x 16 x 16
+
             nn.Conv2d(NDF * 2, NDF * 4, 4, 2, 1, bias=False),
             nn.BatchNorm2d(NDF * 4),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*4) x 8 x 8
+
             nn.Conv2d(NDF * 4, NDF * 8, 4, 2, 1, bias=False),
             nn.BatchNorm2d(NDF * 8),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*8) x 4 x 4
+
             nn.Conv2d(NDF * 8, 1, 4, 1, 0, bias=False),
             nn.Sigmoid()
         )
@@ -151,6 +156,7 @@ def main():
 
     netG.apply(weights_init)
     print(netG)
+
 
     ############################################
     # Create discriminator
@@ -289,6 +295,7 @@ def main():
 def sample():
     model_path = './generator.pt'
     gen = Generator(0)
+    from IPython import embed; embed(); exit(0)
     gen.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     x = torch.randn(1, NZ, 1, 1, device='cpu')
     img = gen.forward(x).squeeze(0).detach().numpy().transpose(1, 2, 0)
@@ -303,7 +310,7 @@ def plot_training():
     pl.show()
 
 if __name__ == '__main__':
-    # main()
-    sample()
+    main()
+    # sample()
 
     # plot_training()
