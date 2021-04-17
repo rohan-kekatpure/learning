@@ -22,27 +22,6 @@ class Solution:
         else:
             return list_[right]
 
-    def find_closest(self, arr, num, k):
-        n = len(arr)
-        left = 0
-        right = n - 1
-        mid = (left + right) // 2
-        while left < right:
-            mid = (left + right) // 2
-            i, j, val = arr[mid]
-            if num == val:
-                return num
-
-            if num > val:
-                left = mid + 1
-            elif num < val:
-                right = mid - 1
-
-        if abs(arr[mid] - num) < abs(arr[right] - num):
-            return arr[mid]
-        else:
-            return arr[right]
-
     def threeSumClosest(self, nums: List[int], target: int) -> int:
         nums.sort()
         nums2sum = []
@@ -65,29 +44,6 @@ class Solution:
 
             if err == 0: break
 
-        return best_sum
-
-    def threeSumClosest1(self, nums: List[int], target: int) -> int:
-        nums.sort()
-        n = len(nums)
-        best_err = float('inf')
-        best_sum = -1
-        best_triple = ()
-        for i in range(n):
-            for j in range(i + 1, n):
-                ni = nums[i]
-                nj = nums[j]
-                target_gap = target - ni - nj
-                newlist = [nums[k] for k in range(n) if k not in [i, j]]
-                nk = self.find_closest_elem(newlist, target_gap, ni, nj)
-                sum_ = ni + nj + nk
-                err = abs(target - sum_)
-                if err < best_err:
-                    best_err = err
-                    best_sum = sum_
-                    best_triple = (ni, nj, nk)
-                if err == 0: return best_sum
-        print(best_triple)
         return best_sum
 
 def main():

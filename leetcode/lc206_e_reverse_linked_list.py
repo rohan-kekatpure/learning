@@ -25,6 +25,7 @@ def main():
     sol = Solution()
     rev_llist = sol.reverseList(llist)
     rev_list = U.linkedlist_to_list(rev_llist)
+    from IPython import embed; embed(); exit(0)
 
 if __name__ == '__main__':
     main()
