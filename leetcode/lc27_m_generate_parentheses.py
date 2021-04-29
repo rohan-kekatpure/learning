@@ -9,24 +9,27 @@ class Solution:
             self.plist.append(s)
             return
 
-        if len(s) == 0:
+        # No matter what state, the parens are valid
+        # if you open one more.
+        if nl > 0:
             self.helper(s + '(', nl - 1, nr)
-            return
 
+
+        # If the last paren is '(', then closing it
+        # is always valid
         if s[-1] == '(':
-            if nl > 0:
-                self.helper(s + '(', nl - 1, nr)
             if nr > 0:
                 self.helper(s + ')', nl, nr - 1)
 
+        # If last paren is ')', then you can close
+        # one more if number of open parens is > 
+        # number of closed parens
         if s[-1] == ')':
-            if nl > 0:
-                self.helper(s + '(', nl - 1, nr)
             if nl < nr:
-                self.helper(s + ')', nl, nr - 1)
+                self.helper(s + ')', nl, nr - 1)                
 
     def generateParenthesis(self, n: int) -> List[str]:
-        self.helper('', n, n)
+        self.helper('(', n - 1, n)
         return self.plist
 
 def main():
