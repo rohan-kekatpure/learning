@@ -1,6 +1,5 @@
 from random import randint
 import  matplotlib.pyplot as pl
-from time import perf_counter_ns
 import numpy as np
 
 
@@ -33,14 +32,6 @@ def main():
     arr = [1, 1, 1, 1, 1, 1]
     print(quickselect_median(arr))
     print(np.median(arr))
-
-def scaling_study():
-    nums = [randint(-100, 100) for _ in range(100000)]
-    start = perf_counter_ns()
-    quickselect_median(nums)
-    end = perf_counter_ns()
-    elapsed = end - start
-    print(elapsed)
 
 if __name__ == '__main__':
     scaling_study()
