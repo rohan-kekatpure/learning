@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  26 MAY 2021 22:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  26 MAY 2021 22:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -315,16 +315,16 @@ File: lstlang1.sty 2015/06/04 1.6 listings language file
 Here is how much of TeX's memory you used:
  4766 strings out of 492649
  72540 string characters out of 6129622
- 454949 words of memory out of 5000000
+ 455987 words of memory out of 5000000
  8145 multiletter control sequences out of 15000+600000
  4880 words of font info for 19 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  29i,6n,43p,321b,1671s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
 /usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u
-sr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/
+sr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/
 local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on leetcode.pdf (184 pages, 237438 bytes).
+Output written on leetcode.pdf (184 pages, 243470 bytes).
 PDF statistics:
  614 PDF objects out of 1000 (max. 8388607)
  419 compressed objects within 5 object streams
