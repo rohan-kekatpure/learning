@@ -1,0 +1,333 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  26 MAY 2021 22:24
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**leetcode.tex
+(./leetcode.tex
+LaTeX2e <2018-04-01> patch level 2
+Babel <3.18> and hyphenation patterns for 84 language(s) loaded.
+(/usr/local/texlive/2018/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2018/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2018/03/24 v5.7 Page Geometry
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+)
+(/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/local/texlive/2018/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count88
+\Gm@cntv=\count89
+\c@Gm@tempcnt=\count90
+\Gm@bindingoffset=\dimen103
+\Gm@wd@mp=\dimen104
+\Gm@odd@mp=\dimen105
+\Gm@even@mp=\dimen106
+\Gm@layoutwidth=\dimen107
+\Gm@layoutheight=\dimen108
+\Gm@layouthoffset=\dimen109
+\Gm@layoutvoffset=\dimen110
+\Gm@dimlist=\toks15
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count91
+\lst@gtempboxa=\box26
+\lst@token=\toks16
+\lst@length=\count92
+\lst@currlwidth=\dimen111
+\lst@column=\count93
+\lst@pos=\count94
+\lst@lostspace=\dimen112
+\lst@width=\dimen113
+\lst@newlines=\count95
+\lst@lineno=\count96
+\lst@maxwidth=\dimen114
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
+\c@lstnumber=\count97
+\lst@skipnumbers=\count98
+\lst@framebox=\box27
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2015/06/04 1.6 listings configuration
+))
+Package: listings 2015/06/04 1.6 (Carsten Heinz)
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+(./leetcode.aux)
+\openout1 = `leetcode.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
+* v-part:(T,H,B)=(95.39737pt, 692.34518pt, 7.22743pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=469.75502pt
+* \textheight=692.34518pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-13.87262pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=65.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+\c@lstlisting=\count99
+(/usr/local/texlive/2018/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count100
+\scratchdimen=\dimen115
+\scratchbox=\box28
+\nofMPsegments=\count101
+\nofMParguments=\count102
+\everyMPshowfont=\toks17
+\MPscratchCnt=\count103
+\MPscratchDim=\dimen116
+\MPnumerator=\count104
+\makeMPintoPDFobject=\count105
+\everyMPtoPDFconversion=\toks18
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2015/06/04 1.6 listings language file
+)
+(./_code/lc2_m_add_two_numbers.py) [1
+
+{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(./_code/lc3_m_longest_substring_wo_repeat_chars.py) [2]
+(./_code/lc4_h_median_of_two_sorted_arrays.py) [3]
+(./_code/lc5_m_longest_palindromic_substring.py) [4]
+(./_code/lc6_m_zigzag_conversion.py) [5] (./_code/lc7_e_reverse_integer.py)
+[6] (./_code/lc8_m_atoi.py) [7] (./_code/lc12_m_integer_to_roman.py) [8]
+(./_code/lc13_e_roman_to_integer.py) [9] (./_code/lc15_m_3sum.py) [10]
+(./_code/lc16_m_3sum_closest.py) [11]
+(./_code/lc17_m_letter_combinations_of_phone_number.py) [12]
+(./_code/lc19_m_remove_nth_node_from_end_of_list.py) [13]
+(./_code/lc21_e_merge_two_sorted_linked_lists.py) [14]
+(./_code/lc23_h_merge_k_sorted_lists.py) [15]
+(./_code/lc24_m_swap_nodes_in_pairs.py) [16]
+(./_code/lc25_h_reverse_nodes_in_k_groups.py) [17]
+(./_code/lc26_e_remove_duplicates_from_sorted_array.py) [18]
+(./_code/lc27_m_generate_parentheses.py) [19] (./_code/lc27_e_remove_element.py
+) [20] (./_code/lc28_e_implement_strstr.py) [21]
+(./_code/lc30_h_substring_with_concatenation_of_all_words.py) [22]
+(./_code/lc33_m_search_in_rotated_sorted_array.py) [23]
+(./_code/lc34_find_first_and_last_position_of_element_in_sorted_array.py)
+[24] (./_code/lc35_e_search_insert_position.py) [25]
+(./_code/lc36_m_valid_sudoku.py) [26] (./_code/lc37_h_sudoku_solver.py)
+[27] (./_code/lc38_m_count_and_say.py) [28] (./_code/lc39_m_combination_sum.py)
+[29] (./_code/lc40_m_combination_sum_2.py) [30]
+(./_code/lc41_h_first_missing_positive.py) [31]
+(./_code/lc42_h_trapping_rain_water.py) [32]
+(./_code/lc43_m_multiply_strings.py) [33] (./_code/lc45_m_jump_game_2.py)
+[34] (./_code/lc46_m_permutations.py) [35] (./_code/lc47_m_permutations_2.py)
+[36] (./_code/lc48_m_rotate_image.py) [37] (./_code/lc49_m_group_anagrams.py)
+[38] (./_code/lc50_m_powxn.py) [39] (./_code/lc51_h_nqueens.py) [40]
+(./_code/lc52_h_nqueens_2.py) [41] (./_code/lc54_m_spiral_matrix.py) [42]
+(./_code/lc55_m_jump_game.py) [43] (./_code/lc56_m_merge_intervals.py) [44]
+(./_code/lc57_m_insert_interval.py) [45] (./_code/lc59_m_spiral_matrix_2.py)
+[46] (./_code/lc60_h_permutation_sequence.py) [47]
+(./_code/lc61_m_rotate_list.py [48]) [49] (./_code/lc62_m_unique_paths.py)
+[50] (./_code/lc63_m_unique_paths_2.py) [51] (./_code/lc66_e_plus_one.py)
+[52] (./_code/lc68_h_text_justification.py) [53] (./_code/lc69_e_sqrtx.py)
+[54] (./_code/lc71_m_simplify_path.py) [55] (./_code/lc74_m_search_2d_matrix.py
+) [56] (./_code/lc75_m_sort_colors.py) [57]
+(./_code/lc76_h_minimum_window_substring.py) [58]
+(./_code/lc77_m_combinations.py) [59] (./_code/lc78_m_subsets.py) [60]
+(./_code/lc79_m_word_search.py) [61]
+(./_code/lc80_m_remove_duplicates_from_sorted_array2.py) [62]
+(./_code/lc81_m_search_in_rotated_sorted_array_2.py) [63]
+(./_code/lc82_m_remove_duplicates_from_sorted_list_2.py) [64]
+(./_code/lc83_e_remove_duplicates_from_sorted_list.py) [65]
+(./_code/lc85_h_maximal_rectangle.py) [66] (./_code/lc86_m_partition_list.py)
+[67] (./_code/lc87_h_scramble_string.py) [68]
+(./_code/lc88_e_merge_sorted_array.py) [69] (./_code/lc89_gray_code.py)
+[70] (./_code/lc90_m_subsets_2.py) [71] (./_code/lc91_m_decode_ways.py)
+[72] (./_code/lc92_m_reverse_linked_list.py) [73]
+(./_code/lc93_m_restore_ip_addresses.py) [74]
+(./_code/lc94_m_binary_tree_inorder_traversal.py) [75]
+(./_code/lc95_m_unique_binary_search_trees_II.py) [76]
+(./_code/lc96_m_unique_binary_search_trees.py) [77]
+(./_code/lc97_m_interleaving_string.py) [78]
+(./_code/lc98_validate_binary_search_tree.py) [79]
+(./_code/lc99_h_recover_binary_search_tree.py) [80]
+(./_code/lc100_e_same_binary_tree.py) [81] (./_code/lc101_e_symmetric_tree.py)
+[82] (./_code/lc102_m_binary_tree_level_order_traversal.py) [83]
+(./_code/lc103_m_binary_tree_zigzag_level_order_traversal.py) [84]
+(./_code/lc104_e_max_depth_of_binary_tree.py) [85]
+(./_code/lc105_m_construct_binary_tree_from_preorder_and_inorder_traversal.py)
+[86]
+(./_code/lc106_m_construct_binary_tree_from_inorder_and_postorder_traversal.py)
+[87] (./_code/lc107_m_binary_tree_level_order_traversal_2.py) [88]
+(./_code/lc108_m_convert_sorted_array_to_binary_search_tree.py) [89]
+(./_code/lc109_m_convert_sorted_list_to_binary_search_tree.py) [90]
+(./_code/lc110_e_balanced_binary_tree.py) [91]
+(./_code/lc111_e_minimum_depth_of_binary_tree.py) [92]
+(./_code/lc112_m_path_sum.py) [93] (./_code/lc113_m_path_sum_2.py) [94]
+(./_code/lc114_m_flatten_binary_tree_to_linked_list.py) [95]
+(./_code/lc115_h_distinct_subsequences.py) [96]
+(./_code/lc118_e_pascals_triangle.py) [97]
+(./_code/lc119_e_pascals_triangle_2.py) [98] (./_code/lc120_m_triangle.py)
+[99] (./_code/lc121_e_best_time_to_buy_and_sell_stock.py) [100]
+(./_code/lc122_e_best_time_to_buy_and_sell_stock_2.py) [101]
+(./_code/lc124_h_maximum_binary_path_sum.py) [102]
+(./_code/lc125_e_valid_palindrome.py) [103] (./_code/lc126_h_word_ladder_2.py
+[104] [105]) [106] (./_code/lc127_word_ladder.py [107] [108]) [109]
+(./_code/lc128_h_longest_consecutive_sequence.py) [110]
+(./_code/lc129_m_sum_root_to_leaf_numbers.py) [111]
+(./_code/lc130_m_surrounded_regions.py) [112]
+(./_code/lc131_palindrome_partitioning.py) [113]
+(./_code/lc132_palindrome_partitioning_2.py) [114]
+(./_code/lc133_m_clone_graph.py) [115] (./_code/lc134_m_gas_station.py)
+[116] (./_code/lc135_h_candy.py) [117] (./_code/lc136_e_single_number.py)
+[118] (./_code/lc138_m_copy_list_with_random_pointer.py) [119]
+(./_code/lc139_m_word_break.py) [120] (./_code/lc141_m_linked_list_cycle.py)
+[121] (./_code/lc142_m_linked_list_cycle_2.py) [122]
+(./_code/lc143_m_reorder_list.py) [123]
+(./_code/lc144_m_binary_tree_preprder_traversal.py) [124]
+(./_code/lc145_m_binary_tree_postorder_traversal.py) [125]
+(./_code/lc146_m_lru_cache.py) [126] (./_code/lc147_m_insertion_sort_list.py)
+[127] (./_code/lc149_h_max_points_on_a_line.py) [128]
+(./_code/lc150_m_evaluate_reverse_polish_notation.py) [129]
+(./_code/lc153_m_find_minimum_in_rotated_sorted_array.py) [130]
+(./_code/lc154_m_find_minimum_in_rotated_sorted_array_2.py) [131]
+(./_code/lc162_m_find_peak_element.py) [132]
+(./_code/lc166_fraction_to_recurring_decimal.py) [133]
+(./_code/lc168_e_excel_sheet_column_title.py) [134]
+(./_code/lc169_majority_element.py) [135]
+(./_code/lc173_m_binary_search_tree_iterator.py) [136]
+(./_code/lc198_m_house_robber.py) [137] (./_code/lc200_number_of_islands.py)
+[138] (./_code/lc206_e_reverse_linked_list.py) [139]
+(./_code/lc207_m_course_schedule.py) [140]
+(./_code/lc208_m_implement_trie_prefix_tree.py) [141]
+(./_code/lc209_m_minimum_size_subarray_sum.py) [142]
+(./_code/lc210_course_schedule_2.py) [143]
+(./_code/lc211_m_design_add_and_search_words_data_structure.py) [144]
+(./_code/lc212_h_word_search_2.py) [145]
+(./_code/lc215_m_kth_largest_element_in_an_array.py) [146]
+(./_code/lc216_m_combination_sum_3.py) [147]
+(./_code/lc220_m_contains_duplicate_3.py) [148]
+(./_code/lc221_m_maximal_square.py) [149] (./_code/lc223_m_rectangle_area.py)
+[150] (./_code/lc224_basic_calculator.py) [151]
+(./_code/lc225_e_implement_stack_using_queues.py) [152]
+(./_code/lc226_e_invert_binary_tree.py) [153]
+(./_code/lc228_e_summary_ranges.py) [154]
+(./_code/lc230_m_kth_smallest_element_in_binary_tree.py) [155]
+(./_code/lc232_e_implement_queue_using_stacks.py) [156]
+(./_code/lc233_number_of_digit_one.py) [157]
+(./_code/lc234_palindrome_linked_list.py) [158]
+(./_code/lc235_lowest_common_ancestor_of_binary_search_tree.py) [159]
+(./_code/lc236_lowest_common_ancestor_of_binary_tree.py) [160]
+(./_code/lc239_h_sliding_window_maximum.py [161]) [162]
+(./_code/lc257_e_binary_tree_paths.py) [163]
+(./_code/lc260_m_single_number_3.py) [164] (./_code/lc263_e_ugly_number.py)
+[165] (./_code/lc264_m_ugly_number_2.py) [166]
+(./_code/lc273_h_integer_to_english_words.py [167]) [168]
+(./_code/lc274_h_index.py) [169] (./_code/lc275_m_h_index_2.py) [170]
+(./_code/lc278_e_first_bad_version.py) [171]
+(./_code/lc279_m_perfect_squares.py) [172]
+(./_code/lc282_h_expression_add_operators.py) [173]
+(./_code/lc283_e_move_zeros.py) [174] (./_code/lc284_m_peeking_itertor.py)
+[175] (./_code/lc287_m_find_the_duplicate_number.py) [176]
+(./_code/lc290_e_word_pattern.py) [177] (./_code/lc292_e_nim_game.py) [178]
+(./_code/lc341_m_flatten_nested_list_iterator.py) [179]
+(./_code/lc342_e_power_of_four.py) [180]
+(./_code/lc365_m_water_and_jug_problem.py) [181]
+(./_code/lc367_e_valid_perfect_square.py) [182]
+(./_code/lc896_e_monotonic_array.py) [183]
+(./_code/lc1835_h_find_XOR_sum_of_pairwise_bit_AND.py) [184] (./leetcode.aux) )
+ 
+Here is how much of TeX's memory you used:
+ 4766 strings out of 492649
+ 72540 string characters out of 6129622
+ 454949 words of memory out of 5000000
+ 8145 multiletter control sequences out of 15000+600000
+ 4880 words of font info for 19 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 29i,6n,43p,321b,1671s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
+/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u
+sr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/
+local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on leetcode.pdf (184 pages, 237438 bytes).
+PDF statistics:
+ 614 PDF objects out of 1000 (max. 8388607)
+ 419 compressed objects within 5 object streams
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+
