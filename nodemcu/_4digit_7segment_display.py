@@ -72,7 +72,7 @@ def main():
         n = random.getrandbits(8)
         # print(n)
         i = 0
-        while i < 50:
+        while i < 100:
             display(n, digit_selectors, hspi, latch)
             i += 1     
 
