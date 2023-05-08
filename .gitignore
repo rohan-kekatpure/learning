@@ -4,4 +4,5 @@
 .idea
 macos/simpleTimer/DerivedData
 **/__pycache__
+.vscode
 
