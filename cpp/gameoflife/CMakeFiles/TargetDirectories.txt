@@ -1,0 +1,4 @@
+/Users/rohankekatpure/work/code/personal/learning/cpp/gameoflife/CMakeFiles/gameoflife.dir
+/Users/rohankekatpure/work/code/personal/learning/cpp/gameoflife/CMakeFiles/edit_cache.dir
+/Users/rohankekatpure/work/code/personal/learning/cpp/gameoflife/CMakeFiles/rebuild_cache.dir
+/Users/rohankekatpure/work/code/personal/learning/cpp/gameoflife/CMakeFiles/gameoflife_autogen.dir

@@ -1,0 +1,113 @@
+\documentclass[11pt,oneside,reqno]{amsart}
+\title{Direct integration of $\bm{\ln(\sin x)}$}
+\author{Rohan~D.~Kekatpure}
+\email{rohan.kekatpure@gmail.com}
+%\date{\today}
+\usepackage[colorlinks = true,
+            allcolors = blue]{hyperref}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\begin{document}
+\maketitle
+
+\setstretch{1.5}
+
+\section{Introduction and Background}
+\noindent This note concerns the evaluation of the definite integral
+\begin{equation*}
+\int_0^{\pi/2} \ln(\sin x)\, dx.
+\end{equation*}
+I encountered this integral in Paul Nahin's \href{http://tinyurl.com/kr45hy33}{{\em Inside Interesting Integrals}} book. The integral is fascinating and has been \href{http://tinyurl.com/mt2cvbzf}{solved} using various methods. The most common solution method is perhaps also the most elegant and is reproduced below. Let
+
+\begin{align*}
+	\mathcal{W} &= \int_0^{\pi/2} \ln(\sin x) \,dx \\
+	&= \int_0^{\pi/2} \ln(\cos x) \,dx \qquad\cdots \text{put $y = \pi/2 - x$ and simplify} \\
+	2\mathcal{W} &= \int_0^{\pi/2} \ln(\sin x \cos x) dx \quad \cdots \text{adding two lines above} \\
+	&= \int_0^{\pi/2} \ln(\sin 2x)\,dx - \int_0^{\pi/2} \ln 2\,dx \\
+	&= -\frac{\pi}{2}\ln 2 + \int_0^{\pi} \ln(\sin y)\,\frac{1}{2}dy \qquad\cdots \text{put $y = 2x$ and simplify} \\
+	&= -\frac{\pi}{2}\ln 2 + 2 \int_0^{\pi/2} \ln(\sin y)\,\frac{dy}{2} \qquad\cdots \text{using symmetry of integral about $y=\pi/2$} \\	
+	&= -\frac{\pi}{2}\ln 2 + \mathcal{W}\\
+	\Rightarrow \mathcal{W}&= -\frac{\pi}{2}\ln 2
+\end{align*}
+\noindent The indirect method, while elegant, is unsatisfactory. This is a purely personal opinion I've had since high school about methods which express the integral as an equation in terms of itself. In this note I describe a direct evaluation of this integral.\footnote{My quest for direct methods for evaluating tough integrals, while often futile, is happily successful in this case.} Note that the direct method we describe below is significantly more laborious and is perhaps not interesting for any purpose other than demonstrating the feasibility of a direct attack.
+%
+\section{Direct method}
+Consider the integrand
+\begin{equation*}
+\ln (\sin x) = \frac{1}{2} \ln (\sin^2 x) = \frac{1}{2} \ln (1-\cos^2 x)
+\end{equation*}
+%
+Since $\cos^2 x \leq 1$ we can expand $\ln (1-\cos^2 x)$ in a Taylor series around $x=0$:
+\begin{equation*}
+-\ln(1-\cos^2 x) = \cos^2 x + \frac{\cos^4 x}{2} + \frac{\cos^6 x}{3} + \cdots = \sum_{m=1}^{\infty}\frac{\cos^{2m} x}{m}
+\end{equation*}
+%
+Therefore,
+\begin{equation}
+\label{eq:dm1}
+\int_0^{\pi/2} \ln(\sin x)\, dx = \frac{1}{2} \int_0^{\pi/2} \ln(1-\cos^2 x)\, dx = \frac{-1}{2} \int_0^{\pi/2} \sum_{m=1}^{\infty}\frac{\cos^{2m} x}{m}
+\end{equation}
+%
+The integral $\int_0^{\pi/2}\cos^{2m}x \,dx$ is a standard integral, but we include its derivation for the sake of completeness.
+\begin{align*}
+\cos^{2m}x &= \left(\frac{e^{ix}+e^{-ix}}{2}\right)^{2m} \quad\cdots \text{binomial expand and collect symmetric exponents}\\
+&=4^{-m}\left[{2m\choose m} + {2m\choose 1} 2 \cos 2x + {2m\choose 2} 2\cos 4x\cdots \right] \\
+\int_0^{\pi/2} \cos^{2m}x\, dx &= 4^{-m} \left[{2m \choose m} \int_0^{\pi/2}dx + {2m \choose 1}\int_0^{\pi/2} 2\cos 2x\, dx%
+                                               + {2m \choose 2} \int_0^{\pi/2}2\cos 4x\,dx + \cdots \right] \\
+&= 4^{-m}{2m \choose m} \frac{\pi}{2} \qquad\cdots\text{integrals of $\cos 2kx$ over $0$ to $\pi/2$ equal $0$ for all $k\geq1$}                                                                                             
+\end{align*}
+%
+Therefore our original integral becomes,
+\begin{align*}
+\label{eq:dm2}
+\mathcal{W}=\int_0^{\pi/2} \ln(\sin x)\, dx &= \frac{1}{2} \int_0^{\pi/2} \ln(1-\cos^2 x)\, dx \\
+&= \frac{-1}{2} \int_0^{\pi/2} \sum_{m=1}^{\infty}\frac{\cos^{2m} x}{m}\, dx \\
+&= \frac{-1}{2} \sum_{m=1}^{\infty} \int_0^{\pi/2} \frac{\cos^{2m} x}{m}\, dx \\
+&= \frac{-\pi}{4} \sum_{m=1}^{\infty} \frac{4^{-m}}{m} {2m\choose m}\\
+&= \frac{-\pi}{4} S
+\end{align*}
+%
+To complete the solution we need to evaluate the sum 
+%
+\begin{equation}
+S = \sum_{m=1}^{\infty} \frac{4^{-m}}{m} {2m\choose m}
+\end{equation} 
+%
+in a closed form. The form of the sum suggests a generating function of the form
+\begin{equation*}
+g(x) = \sum_{m=1}^{\infty}{2m\choose m} x^m
+\end{equation*}
+If we had such a generating function, we could calculate $S$. Luckily, the binomial coefficient ${2m \choose m}$, known as the \href{http://tinyurl.com/3tspr8wp}{Central binomial coefficient}, already has a known generating function:
+%
+\begin{equation*}
+\frac{1}{\sqrt{1-4x}} - 1 = \sum_{m=1}^{\infty}{2m\choose m} x^m
+\end{equation*}
+%
+From here it is straightforward to evaluate $S$. Divide both sides by $x$ to get 
+\begin{equation*}
+\frac{1}{x\sqrt{1-4x}} - \frac{1}{x} = \sum_{m=1}^{\infty}{2m\choose m} x^{m-1}
+\end{equation*}
+%
+Now integrate with respect to $x$ from $0$ to $\frac{1}{4}$ to get
+\begin{equation}
+\int_0^{1/4}\sum_{m=1}^{\infty}{2m\choose m} x^{m-1}\,dx = \int_0^{1/4}\left(\frac{1}{x\sqrt{1-4x}} - \frac{1}{x}\right)\,dx 
+\end{equation}
+On the LHS (close your eyes and) swap the integration and the sum and integrate term by term. On the RHS, substitute $1-4x = y^2$ to get,
+%
+\begin{align*}
+S = \sum_{m=1}^{\infty}\frac{4^{-m}}{m}{2m\choose m} x^m &= \int_1^0\left(\frac{1}{\frac{1-y^2}{4}y} - \frac{1}{\frac{1-y^2}{4}}\right)\,\frac{-ydy}{2} \\
+&=2 \int_0^1\frac{dy}{1 + y}\\
+&= 2\ln 2
+\end{align*}
+%
+Which beings our final answer to
+\begin{equation*}
+\int_0^{\pi/2}\ln(\sin x)\, dx = -\frac{\pi}{4}S =-\frac{\pi}{2} \ln 2
+\end{equation*}
+
+\end{document}
