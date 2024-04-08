@@ -1,0 +1,7 @@
+tbl A = clients_fact;
+tbl B = clients_accounts_summaries;
+tbl X = A.user_id, A.annual_income ~ income %% A.annual_income > 30000;
+tbl Y = B.user_id, B.market_value ~ tmv30;
+tbl Z = X | Y @@ X.user_id = Y.user_id;
+tbl Z1 = Z.user_id, sum(Z.tmv30) ~ total_tmv :: Z.user_id;
+rset Z1;
