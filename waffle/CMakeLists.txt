@@ -10,4 +10,9 @@ project(
 )
 
 set (CMAKE_CXX_STANDARD 17)
-add_executable(waffle src/main.cpp)
+add_executable(
+    waffle 
+    src/main.cpp
+    src/scanner.cpp
+    src/token.cpp
+)
