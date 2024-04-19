@@ -16,9 +16,9 @@ int runFile(std::string filePath) {
 
     // Scan the file and emit tokens
     Scanner s{source};
-    auto tokens = s.scanTokens();        
+    auto tokens = s.scanTokens(); 
     for (auto token: tokens) {
-        printf("%s", token.toString().c_str());
+        printf("%s\n", token.toString().c_str());
     }
 
     return 0;
@@ -27,7 +27,7 @@ int runFile(std::string filePath) {
 
 int main(int argc, char* argv[]) {
     if (argc > 1) {
-        std::string filePath = argv[1];
+        std::string filePath = argv[1];        
         printf("Running %s\n", filePath.c_str());
 
         // Run the file

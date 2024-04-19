@@ -14,14 +14,17 @@ class Scanner {
         int line = 1;
         bool isAtEnd();
         char advance(); 
-        char peek();
+        char peek(unsigned int lookAhead=1);
         void addToken(TokenType type);
         void addTokenWithLiteralValue(TokenType type, Literal literal);
         bool match(char expected);
+        bool isAlphaNumeric(char c);
         void less();
         void string();
         void number();
+        void identifier();        
         void scanToken();
+        void badCharError(const char c);
 
     public:
         Scanner(std::string source);
