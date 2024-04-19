@@ -11,52 +11,52 @@ std::string Token::tokenTypeStr() const {
         case TokenType::LEFT_PAREN: return "LEFT_PAREN"; break;
         case TokenType::RIGHT_PAREN: return "RIGHT_PAREN"; break;
         case TokenType::LEFT_BRACE: return "LEFT_BRACE"; break;
-        case TokenType::RIGHT_BRACE: return "RIGHT_BRACE";
-        case TokenType::TILDE: return "TILDE";
-        case TokenType::COMMA: return "COMMA"; 
-        case TokenType::DOT: return "DOT"; 
-        case TokenType::MINUS: return "MINUS";
-        case TokenType::PLUS: return "PLUS";
-        case TokenType::STAR: return "STAR";
-        case TokenType::SEMICOLON: return "SEMICOLON"; 
-        case TokenType::SLASH: return "SLASH";
+        case TokenType::RIGHT_BRACE: return "RIGHT_BRACE"; break;
+        case TokenType::TILDE: return "TILDE"; break;
+        case TokenType::COMMA: return "COMMA"; break; 
+        case TokenType::DOT: return "DOT"; break; 
+        case TokenType::MINUS: return "MINUS"; break;
+        case TokenType::PLUS: return "PLUS"; break;
+        case TokenType::STAR: return "STAR"; break;
+        case TokenType::SEMICOLON: return "SEMICOLON"; break; 
+        case TokenType::SLASH: return "SLASH"; break;
 
         // One or two character tokens
-        case TokenType::BANG: return "BANG";
-        case TokenType::BANG_EQUAL: return "BANG_EQUAL";
-        case TokenType::EQUAL: return "EQUAL";
-        case TokenType::EQUAL_EQUAL: return "EQUAL_EQUAL";
-        case TokenType::GREATER: return "GREATER";
-        case TokenType::GREATER_EQUAL: return "GREATER_EQUAL";
-        case TokenType::LESS: return "LESS";
-        case TokenType::LESS_EQUAL: return "LESS_EQUAL";
+        case TokenType::BANG: return "BANG"; break;
+        case TokenType::BANG_EQUAL: return "BANG_EQUAL"; break;
+        case TokenType::EQUAL: return "EQUAL"; break;
+        case TokenType::EQUAL_EQUAL: return "EQUAL_EQUAL"; break;
+        case TokenType::GREATER: return "GREATER"; break;
+        case TokenType::GREATER_EQUAL: return "GREATER_EQUAL"; break;
+        case TokenType::LESS: return "LESS"; break;
+        case TokenType::LESS_EQUAL: return "LESS_EQUAL"; break;
 
         // Two character tokens
-        case TokenType::DBL_PERCENT: return "DBL_PERCENT";
-        case TokenType::DBL_AT: return "DBL_AT";
-        case TokenType::DBL_COLON: return "DBL_COLON";
+        case TokenType::DBL_PERCENT: return "DBL_PERCENT"; break;
+        case TokenType::DBL_AT: return "DBL_AT"; break;
+        case TokenType::DBL_COLON: return "DBL_COLON"; break;
         
         // New operators for waffle
-        case TokenType::BAR: return "BAR"; // inner join | 
-        case TokenType::BAR_LEFT: return "BAR_LEFT"; // left join <| 
-        case TokenType::BAR_RIGHT: return "BAR_RIGHT"; // right join |> 
-        case TokenType::LEFT_RIGHT: return "LEFT_RIGHT"; // outer join <> 
+        case TokenType::BAR: return "BAR"; break; // inner join | 
+        case TokenType::BAR_LEFT: return "BAR_LEFT"; break; // left join <| 
+        case TokenType::BAR_RIGHT: return "BAR_RIGHT"; break; // right join |> 
+        case TokenType::LEFT_RIGHT: return "LEFT_RIGHT"; break; // outer join <> 
 
         // Literals
-        case TokenType::IDENTIFIER: return "IDENTIFIER"; 
-        case TokenType::STRING: return "STRING";
-        case TokenType::NUMBER: return "NUMBER";
+        case TokenType::IDENTIFIER: return "IDENTIFIER"; break; 
+        case TokenType::STRING: return "STRING"; break;
+        case TokenType::NUMBER: return "NUMBER"; break;
 
         //Key words
-        case TokenType::LET: return "KWD_LET";
-        case TokenType::TBL: return "KWD_TBL";
-        case TokenType::AND: return "KWD_AND";
-        case TokenType::OR: return "KWD_OR";
-        case TokenType::NOT: return "KWD_NOT";
-        case TokenType::RSET: return "KWD_RSET";
-        case TokenType::NIL: return "KWD_NIL";
+        case TokenType::LET: return "KWD_LET"; break;
+        case TokenType::TBL: return "KWD_TBL"; break;
+        case TokenType::AND: return "KWD_AND"; break;
+        case TokenType::OR: return "KWD_OR"; break;
+        case TokenType::NOT: return "KWD_NOT"; break;
+        case TokenType::RSET: return "KWD_RSET"; break;
+        case TokenType::NIL: return "KWD_NIL"; break;
 
-        case TokenType::_EOF: return "EOF";
+        case TokenType::_EOF: return "EOF"; break;
 
     }
 }
