@@ -70,7 +70,7 @@ void Scanner::number() {
     while (isdigit(peek(1))) advance();
     if ((peek(1) == '.') && isdigit(peek(2))){
         advance();
-        while (isdigit(peek(2))) advance();
+        while (isdigit(peek(1))) advance();
     }
     std::string numStr = source.substr(start, current);
     double val = std::stod(numStr);

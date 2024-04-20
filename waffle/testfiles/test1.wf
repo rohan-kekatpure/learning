@@ -1,1 +1,2 @@
 tbl A = clients_fact;
+let B = 3.141592654;
