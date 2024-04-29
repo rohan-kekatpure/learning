@@ -1,5 +1,4 @@
-parser grammar ExprParser;
-options { tokenVocab=ExprLexer; }
+grammar waffle;
 
 program: stat* EOF;
 
@@ -22,3 +21,16 @@ column:
   | INT '~' ID
   | column ',' column
   ;
+  
+EQ : '=' ;
+SEMI : ';' ;
+DOT: '.' ;
+TBL: 'tbl' ;
+COMMA: ',' ;
+TILDE: '~' ;
+WHERE: '%%';
+GROUPBY: '::';
+
+INT : [0-9]+ ;
+ID: [a-zA-Z_][a-zA-Z_0-9]* ;
+WS: [ \t\n\r\f]+ -> skip ;
