@@ -5,7 +5,7 @@
 #include<string>
 #include<iostream>
 
- typedef std::variant<std::string, int, double> Literal;
+typedef std::variant<std::string, int, double> Literal;
 
 enum class TokenType {
     // Single character tokens
