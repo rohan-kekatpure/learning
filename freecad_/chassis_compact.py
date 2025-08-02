@@ -55,10 +55,19 @@ def main():
     # left wheel attachment
     ljoint = Part.makeCylinder(BODY_THICKNESS, PCB_SCREW_VSPACING, p2, V(0, 1, 0), 90)
     ljoint = ljoint.rotated(p2, V(0, 1, 0), -90)
-    lwhlattach = Part.makeBox(
-        BODY_THICKNESS, PCB_SCREW_VSPACING, BED_ELEVATION,
-        V(p2.x - BODY_THICKNESS, p2.y, -BED_ELEVATION)
-    )
+
+    lw1 = p2
+    lw2 = V(lw1.x, lw1.y, lw1.z - BED_ELEVATION)
+    lw3 = V(lw2.x, lw2.y + PCB_SCREW_VSPACING / 2, lw2.z)
+    lw4 = p3
+    lwhlpoints = [lw1, lw2, lw3, lw4]
+    lwhlface = T.make_face_from_points(lwhlpoints)
+    lwhlattach = lwhlface.extrude(V(-1, 0, 0) * BODY_THICKNESS)
+
+    # lwhlattach = Part.makeBox(
+    #     BODY_THICKNESS, PCB_SCREW_VSPACING, BED_ELEVATION,
+    #     V(p2.x - BODY_THICKNESS, p2.y, -BED_ELEVATION)
+    # )
 
     lwhlattach = lwhlattach.fuse(ljoint)
 
