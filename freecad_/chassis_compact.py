@@ -11,7 +11,7 @@ def main():
     doc = App.newDocument('chassis')
 
     # Dimensions
-    MARGIN = 10
+    MARGIN = 25
     PCB_SCREW_HSPACING = 38.5
     PCB_SCREW_VSPACING = 86.6
     PCB_LEN = 90
@@ -176,7 +176,89 @@ def main():
     for loc in [cws1, cws2, cws3, cws4]:
         chassis = T.tap(chassis, loc, *cwsargs)
 
-    Part.show(chassis, 'chassis')
+
+    # Bounding boxes for various components
+    # Gearbox BB
+    GB_DY = 70
+    GB_DX = 19
+    GB_DZ = 22.30
+    GB_ORIGIN = V(
+        p2.x,
+        gbx_left_axle.y + 5 - GB_DY,
+        p2.z - GB_DZ
+    )
+    GB_BBOX_LEFT = Part.makeBox(GB_DX, GB_DY, GB_DZ, GB_ORIGIN)
+    GB_BBOX_RIGHT = T.mirror_shape(doc, GB_BBOX_LEFT, p0, V(1, 0, 0))
+
+    # Battery
+    BAT_DZ = 17
+    BAT_DY = 48
+    BAT_DX = 26.5
+    BAT_ORIGIN = V(p0.x - BAT_DX / 2, p0.y, p0.z - BAT_DZ)
+    BAT_BBOX = Part.makeBox(BAT_DX, BAT_DY, BAT_DZ, BAT_ORIGIN)
+
+    BBOXES = (
+        GB_BBOX_LEFT
+        .fuse(GB_BBOX_RIGHT)
+        .fuse(BAT_BBOX)
+    )
+
+    # Standins for the PCB
+    standin_rad = 1.2 * PCB_SCREW_DIA / 2.
+    standin_height = 10
+    standin1 = Part.makeCylinder(standin_rad, standin_height, pcbs1, V(0, 0, 1))
+    standin2 = Part.makeCylinder(standin_rad, standin_height, pcbs2, V(0, 0, 1))
+    standin3 = Part.makeCylinder(standin_rad, standin_height, pcbs3, V(0, 0, 1))
+    standin4 = Part.makeCylinder(standin_rad, standin_height, pcbs4, V(0, 0, 1))
+
+    standins = (
+        standin1
+        .fuse(standin2)
+        .fuse(standin3)
+        .fuse(standin4)
+    )
+
+    # PCB board
+    PCB_DX = 48
+    PCB_DY = 96
+    PCB_DZ = 2
+    PCB_ORIGIN = V(
+        pcbs1.x - 4.5,
+        pcbs1.y - 4.5,
+        standin_height + BODY_THICKNESS
+    )
+    PCB_BBOX = Part.makeBox(
+        PCB_DX,
+        PCB_DY,
+        PCB_DZ,
+        PCB_ORIGIN
+    )
+
+    # Wheels
+    WHL_RAD = WHEEL_DIA / 2.0
+    WHL_WIDTH = 20
+    LWHL_ORIGIN = V(
+        gbx_left_axle.x - BODY_THICKNESS,
+        gbx_left_axle.y,
+        gbx_left_axle.z
+    )
+    LWHL = Part.makeCylinder(
+        WHL_RAD,
+        WHL_WIDTH,
+        LWHL_ORIGIN,
+        V(-1, 0, 0)
+    )
+
+    RWHL = T.mirror_shape(doc, LWHL, p0, V(1, 0, 0))
+
+    WHEELS_BBOX = LWHL.fuse(RWHL)
+
+    # Assemble everything
+    Part.show(chassis, 'CHASSIS')
+    Part.show(BBOXES, 'BOUNDING_BOXES')
+    Part.show(standins, 'STANDINS')
+    Part.show(PCB_BBOX, 'PCB_BBOX')
+    Part.show(WHEELS_BBOX, 'WHEELS')
     doc.saveAs('chassis.FCStd')
 
 if __name__ == '__main__':
