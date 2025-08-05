@@ -24,11 +24,12 @@ def main():
     CASTER_HT = 34
     CASTER_SCREW_THREAD_DIA = 3
     CASTER_SCREW_HEAD_DIA = 5
-    CASTER_PCB_SCREW_VSEP = 10 * 0
+    CASTER_PCB_SCREW_VSEP = -5
 
     WHEEL_DIA = 66
     GEARBOX_AXLE_DIA = 7.5
     GEARBOX_SCREW_DIA = 3
+    GEARBOX_BLINDHOLE_DIA = 4
     GEARBOX_AXLE_SCREW_HSEP = 20
     GEARBOX_SCREW_SEP = 17.5
     GEARBOX_AXLE_SCREW_VSEP = GEARBOX_SCREW_SEP / 2.
@@ -63,12 +64,6 @@ def main():
     lwhlpoints = [lw1, lw2, lw3, lw4]
     lwhlface = T.make_face_from_points(lwhlpoints)
     lwhlattach = lwhlface.extrude(V(-1, 0, 0) * BODY_THICKNESS)
-
-    # lwhlattach = Part.makeBox(
-    #     BODY_THICKNESS, PCB_SCREW_VSPACING, BED_ELEVATION,
-    #     V(p2.x - BODY_THICKNESS, p2.y, -BED_ELEVATION)
-    # )
-
     lwhlattach = lwhlattach.fuse(ljoint)
 
     # right wheel attachment
@@ -81,11 +76,25 @@ def main():
         p2.y + GEARBOX_SCREW_CLR,
         - (GEARBOX_SCREW_DIA / 2 + GEARBOX_BODY_VERT_CLR)
     )
+    chassis = T.tap(
+        chassis,
+        gbx_left_s1,
+        V(-1, 0, 0),
+        GEARBOX_SCREW_DIA,
+        BODY_THICKNESS
+    )
 
     gbx_left_s2 = V(
         gbx_left_s1.x,
         gbx_left_s1.y,
         gbx_left_s1.z - GEARBOX_SCREW_SEP
+    )
+    chassis = T.tap(
+        chassis,
+        gbx_left_s2,
+        V(-1, 0, 0),
+        GEARBOX_SCREW_DIA,
+        BODY_THICKNESS
     )
 
     gbx_left_axle = V(
@@ -93,12 +102,39 @@ def main():
         gbx_left_s1.y + GEARBOX_AXLE_SCREW_HSEP,
         gbx_left_s1.z - GEARBOX_AXLE_SCREW_VSEP
     )
+    chassis = T.tap(
+        chassis,
+        gbx_left_axle,
+        V(-1, 0, 0),
+        GEARBOX_AXLE_DIA,
+        BODY_THICKNESS
+    )
 
+
+    gbx_left_blindhole = V(
+        gbx_left_axle.x,
+        gbx_left_axle.y - 11,
+        0.5 * (gbx_left_s1.z + gbx_left_s2.z)
+    )
+    chassis = T.tap(
+        chassis,
+        gbx_left_blindhole,
+        V(-1, 0, 0),
+        GEARBOX_BLINDHOLE_DIA,
+        0.5 * BODY_THICKNESS
+    )
 
     gbx_right_axle = V(
-        -gbx_left_axle.x + BODY_THICKNESS,
+        -p2.x,
         gbx_left_axle.y,
         gbx_left_axle.z
+    )
+    chassis = T.tap(
+        chassis,
+        gbx_right_axle,
+        V(1, 0, 0),
+        GEARBOX_AXLE_DIA,
+        BODY_THICKNESS
     )
 
     gbx_right_s1 = V(
@@ -106,47 +142,45 @@ def main():
         gbx_left_s1.y,
         gbx_left_s1.z
     )
+    chassis = T.tap(
+        chassis,
+        gbx_right_s1,
+        V(1, 0, 0),
+        GEARBOX_SCREW_DIA,
+        BODY_THICKNESS
+    )
 
     gbx_right_s2 = V(
         gbx_right_axle.x,
         gbx_left_s2.y,
         gbx_left_s2.z
     )
+    chassis = T.tap(
+        chassis,
+        gbx_right_s2,
+        V(1, 0, 0),
+        GEARBOX_SCREW_DIA,
+        BODY_THICKNESS
+    )
 
-    gbx_axle_locations = [
-        gbx_left_axle,
-        gbx_right_axle
-    ]
-    for loc in gbx_axle_locations:
-        chassis = T.tap(chassis, loc, V(1, 0, 0), GEARBOX_AXLE_DIA, 2 * BODY_THICKNESS)
-
-    gbx_screw_locations = [
-        gbx_left_s1,
-        gbx_left_s2,
-        gbx_right_s1,
-        gbx_right_s2
-    ]
-    for loc in gbx_screw_locations:
-        chassis = T.tap(chassis, loc, V(1, 0, 0), GEARBOX_SCREW_DIA, 2 * BODY_THICKNESS)
-
-
-    # # Caster buffer
-    # gbx_axle_z = -BED_ELEVATION + gbx_left_axle.z
-    # h = abs(gbx_axle_z) + WHEEL_DIA / 2. - CASTER_HT
-    # caster_mesa = Part.makeBox(
-    #     abs(2 * p8.x),
-    #     p9.y - p8.y,
-    #     h,
-    #     V(p8.x, p8.y, -h)
-    # )
-
-    # chassis = chassis.fuse(caster_mesa)
+    gbx_right_blindhole = V(
+        gbx_right_axle.x,
+        gbx_left_blindhole.y,
+        gbx_left_blindhole.z
+    )
+    chassis = T.tap(
+        chassis,
+        gbx_right_blindhole,
+        V(1, 0, 0),
+        GEARBOX_BLINDHOLE_DIA,
+        0.5 * BODY_THICKNESS
+    )
 
     # PCB screws
     pcbsargs = (
-        V(0, 0, 1),
+        V(0, 0, -1),
         PCB_SCREW_DIA,
-        2 * BODY_THICKNESS
+        BODY_THICKNESS
     )
 
     pcbs1 = V(p0.x - PCB_SCREW_HSPACING / 2, p2.y, p0.z + BODY_THICKNESS)
@@ -156,11 +190,11 @@ def main():
     for loc in [pcbs1, pcbs2, pcbs3, pcbs4]:
         chassis = T.tap(chassis, loc, *pcbsargs)
 
-    # Caster wheel screws
+    # Caster wheel screws and caster buffer
     cwsargs = (
-        V(0, 0, 1),
+        V(0, 0, -1),
         CASTER_SCREW_THREAD_DIA,
-        4 * BODY_THICKNESS,
+        BODY_THICKNESS,
         CASTER_SCREW_HEAD_DIA,
         2
     )
@@ -173,9 +207,27 @@ def main():
     cws2 = V(cws1.x + CASTER_SCREW_HSEP, cws1.y, cws1.z)
     cws3 = V(cws2.x, cws2.y - CASTER_SCREW_VSEP, cws2.z)
     cws4 = V(cws1.x, cws3.y, cws3.z)
+
+    caster_buffer_DX = CASTER_SCREW_HSEP + 2 # TODO: make a constant
+    caster_buffer_DY = CASTER_SCREW_VSEP + 2 # TODO: make a constant
+    caster_buffer_DZ = h = WHEEL_DIA / 2 +abs(gbx_left_axle.z) - CASTER_HT
+
+    caster_buffer_origin = V(
+        cws4.x,
+        cws4.y,
+        -caster_buffer_DZ
+    )
+    caster_mesa = Part.makeBox(
+        caster_buffer_DX,
+        caster_buffer_DY,
+        caster_buffer_DZ,
+        caster_buffer_origin
+    )
+
+    # chassis = chassis.fuse(caster_mesa)
+
     for loc in [cws1, cws2, cws3, cws4]:
         chassis = T.tap(chassis, loc, *cwsargs)
-
 
     # Bounding boxes for various components
     # Gearbox BB

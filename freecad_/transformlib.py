@@ -45,25 +45,11 @@ def mirror_shape(doc, source_shape, base_point, normal_vector):
     doc.removeObject('_target_dummy')
     return target_shape
 
-def tap(body, center, axis, thread_dia, thread_len, head_dia=0, head_len=0):
-    lhead = head_len
-    ltot = head_len + thread_len
-    if axis == V(0, 0, 1):
-        thread_loc = V(center.x, center.y, center.z - ltot)
-        head_loc = V(center.x, center.y, center.z - lhead)
-    elif axis == V(0, 1, 0):
-        thread_loc = V(center.x, center.y - ltot, center.z)
-        head_loc = V(center.x, center.y - lhead, center.z)
-    elif axis == V(1, 0, 0):
-        thread_loc = V(center.x - ltot, center.y, center.z)
-        head_loc = V(center.x - lhead, center.y, center.z)
-    else:
-        raise ValueError('tap axis is not x, y or z')
 
-    screw = Part.makeCylinder(thread_dia / 2, thread_len, thread_loc, axis)
+def tap(body, center, direction, thread_dia, thread_len, head_dia=0, head_len=0):
+    screw = Part.makeCylinder(thread_dia / 2, thread_len, center, direction)
     if head_dia > 0:
-
-        head = Part.makeCylinder(head_dia / 2, head_len, head_loc, axis)
+        head = Part.makeCylinder(head_dia / 2, head_len, center, direction)
         screw = screw.fuse(head)
     body = body.cut(screw)
     return body
