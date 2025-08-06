@@ -36,6 +36,12 @@ def main():
     GEARBOX_BODY_VERT_CLR = 5
     GEARBOX_SCREW_CLR = 10
 
+    # Battery dimensions
+    BAT_DZ = 17
+    BAT_DY = 48
+    BAT_DX = 26.5
+
+
     BED_ELEVATION = 2 * GEARBOX_BODY_VERT_CLR + GEARBOX_SCREW_SEP + GEARBOX_SCREW_DIA
 
 
@@ -229,6 +235,31 @@ def main():
     for loc in [cws1, cws2, cws3, cws4]:
         chassis = T.tap(chassis, loc, *cwsargs)
 
+    # Battery straps
+    STRAP_DX = 2
+    STRAP_DY = 20
+    STRAP_LEFT_ORIGIN = V(
+        -BAT_DX / 2. - 5,
+        0.5 * (cws4.y + pcbs1.y) - 10,
+        BODY_THICKNESS
+    )
+
+    STRAP_RIGHT_ORIGIN = V(
+        BAT_DX / 2. + STRAP_DX + 5,
+        STRAP_LEFT_ORIGIN.y,
+        STRAP_LEFT_ORIGIN.z
+    )
+    for origin in [STRAP_LEFT_ORIGIN, STRAP_RIGHT_ORIGIN]:
+        strap_slot = Part.makeBox(
+            STRAP_DX,
+            STRAP_DY,
+            BODY_THICKNESS,
+            origin,
+            V(0, 0, -1)
+        )
+
+        chassis = chassis.cut(strap_slot)
+
     # Bounding boxes for various components
     # Gearbox BB
     GB_DY = 70
@@ -243,9 +274,6 @@ def main():
     GB_BBOX_RIGHT = T.mirror_shape(doc, GB_BBOX_LEFT, p0, V(1, 0, 0))
 
     # Battery
-    BAT_DZ = 17
-    BAT_DY = 48
-    BAT_DX = 26.5
     BAT_ORIGIN = V(p0.x - BAT_DX / 2, p0.y, p0.z - BAT_DZ)
     BAT_BBOX = Part.makeBox(BAT_DX, BAT_DY, BAT_DZ, BAT_ORIGIN)
 
@@ -302,7 +330,6 @@ def main():
     )
 
     RWHL = T.mirror_shape(doc, LWHL, p0, V(1, 0, 0))
-
     WHEELS_BBOX = LWHL.fuse(RWHL)
 
     # Assemble everything
