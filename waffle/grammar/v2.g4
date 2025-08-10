@@ -17,7 +17,7 @@ column:
     ID
   | ID '~' ID    
   | ID'.'ID 
-  | ID'.'ID '~' ID 
+  | ID'.'ID '~' ID      
   | INT '~' ID
   | column ',' column
   ;

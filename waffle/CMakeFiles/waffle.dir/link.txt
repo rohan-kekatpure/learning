@@ -1,0 +1,1 @@
+/Library/Developer/CommandLineTools/usr/bin/c++  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/Cellar/openssl@3/3.4.0/lib CMakeFiles/waffle.dir/src/main.cpp.o CMakeFiles/waffle.dir/src/scanner.cpp.o CMakeFiles/waffle.dir/src/token.cpp.o -o waffle 
