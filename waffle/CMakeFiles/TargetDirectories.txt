@@ -1,3 +1,0 @@
-/Users/rohankekatpure/work/code/personal/learning/waffle/CMakeFiles/waffle.dir
-/Users/rohankekatpure/work/code/personal/learning/waffle/CMakeFiles/edit_cache.dir
-/Users/rohankekatpure/work/code/personal/learning/waffle/CMakeFiles/rebuild_cache.dir
