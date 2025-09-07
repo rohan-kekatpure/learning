@@ -6,3 +6,8 @@ macos/simpleTimer/DerivedData
 **/__pycache__
 .vscode
 **/build/
+**/CMakeCache.txt
+**/CMakeCache.txt
+**/CMakeFiles/
+**/Makefile
+**/cmake_install.cmake

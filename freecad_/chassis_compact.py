@@ -334,10 +334,10 @@ def main():
 
     # Assemble everything
     Part.show(chassis, 'CHASSIS')
-    # Part.show(BBOXES, 'BOUNDING_BOXES')
-    # Part.show(standins, 'STANDINS')
-    # Part.show(PCB_BBOX, 'PCB_BBOX')
-    # Part.show(WHEELS_BBOX, 'WHEELS')
+    Part.show(BBOXES, 'BOUNDING_BOXES')
+    Part.show(standins, 'STANDINS')
+    Part.show(PCB_BBOX, 'PCB_BBOX')
+    Part.show(WHEELS_BBOX, 'WHEELS')
     doc.saveAs('chassis.FCStd')
 
 if __name__ == '__main__':
