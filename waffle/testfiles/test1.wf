@@ -1,2 +1,4 @@
-tbl A = clients_fact;
-let B = 3.141592654;
+tbl A = clients_client_list;
+tbl B = clients_fact;
+tbl C = B;
+

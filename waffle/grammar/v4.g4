@@ -32,7 +32,6 @@ columncondition: column ('>' | '<' | EQ | NE) (column | literal);
 
 literal: INT | FLOAT| STRING | 'true' | 'false' | 'NULL';
 
-
 EQ : '=' ;
 SEMI : ';' ;
 DOT: '.' ;

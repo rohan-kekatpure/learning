@@ -1,5 +1,6 @@
-#include<vector>
-#include<string>
+#include <vector>
+#include <string>
+#include <map>
 #include "scanner.h"
 
 const char SINGLE_QUOTE = '\'';
@@ -77,9 +78,33 @@ void Scanner::number() {
     addTokenWithLiteralValue(TokenType::NUMBER, val);
 }
 
+// void Scanner::identifier() {
+//     while (!isAtEnd() && isAlphaNumeric(peek())) advance();
+//     addToken(TokenType::IDENTIFIER);
+// }
+
 void Scanner::identifier() {
     while (!isAtEnd() && isAlphaNumeric(peek())) advance();
-    addToken(TokenType::IDENTIFIER);
+
+    std::string text = source.substr(start, current - start);
+    
+    // Check if the identifier is a reserved keyword
+    static const std::map<std::string, TokenType> keywords = {
+        {"let", TokenType::LET},
+        {"tbl", TokenType::TBL},
+        {"and", TokenType::AND},
+        {"or", TokenType::OR},
+        {"not", TokenType::NOT},
+        {"rset", TokenType::RSET},
+        {"nil", TokenType::NIL}
+    };
+
+    auto it = keywords.find(text);
+    if (it != keywords.end()) {
+        addToken(it->second);
+    } else {
+        addToken(TokenType::IDENTIFIER);
+    }
 }
 
 void Scanner::badCharError(const char c) {

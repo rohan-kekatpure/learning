@@ -61,7 +61,7 @@ std::string Token::tokenTypeStr() const {
     }
 }
 
-std::string Token::toString() {
+std::string Token::toString() const {
     std::string tts(tokenTypeStr());
     return tts + " " + this->lexeme;
 }

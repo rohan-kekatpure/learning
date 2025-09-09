@@ -6,22 +6,44 @@
 
 #include "token.h"
 #include "scanner.h"
-#include <memory>
-#include <stdexcept>
+#include "parser.h"
+#include "sql_generator.h"
 #include "operators.h"
 
 int runFile(std::string filePath) {
     // Read file contents
-    std::ifstream is{filePath}; 
+    std::ifstream is{filePath};
+    if (!is.is_open()) {
+        std::cerr << "Error: Could not open file " << filePath << std::endl;
+        return 1;
+    }
     std::stringstream buffer;
     buffer << is.rdbuf();
-    auto source{buffer.str()};        
+    auto source{buffer.str()};
 
-    // Scan the file and emit tokens
-    Scanner s{source};
-    auto tokens = s.scanTokens(); 
-    for (auto token: tokens) {
-        printf("%s\n", token.toString().c_str());
+    try {
+        // 1. Scan the file and emit tokens
+        Scanner scanner(source);
+        auto tokens = scanner.scanTokens();
+        std::cout << "Tokens:" << std::endl;
+        for (const auto& token : tokens) {
+            std::cout << token.toString() << std::endl;
+        }
+
+        // 2. Parse tokens and build the AST
+        Parser parser(tokens);
+        auto ast = parser.parse();
+        std::cout << "\nAST built successfully." << std::endl;
+
+        // 3. Generate SQL from the AST
+        SQLGenerator sqlGen;
+        std::string sqlOutput = sqlGen.generate(ast);
+        std::cout << "\nGenerated SQL:" << std::endl;
+        std::cout << sqlOutput << std::endl;
+
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
     }
 
     return 0;
@@ -30,45 +52,13 @@ int runFile(std::string filePath) {
 
 int main(int argc, char* argv[]) {
     if (argc > 1) {
-        std::string filePath = argv[1];        
+        std::string filePath = argv[1];
         printf("Running %s\n", filePath.c_str());
 
         // Run the file
-        runFile(filePath);
+        return runFile(filePath);
+    } else {
+        std::cerr << "Usage: waffle <filePath>" << std::endl;
+        return 1;
     }
-
-    return 0;
 }
-
-
-void createAndPrintAST() {    
-
-    Token tbl_token(TokenType::TBL, "tbl", 0, 1);
-    Token id_token(TokenType::IDENTIFIER, "active_users", 0, 1);
-    Token eq_token(TokenType::EQUAL, "=", 0, 1);
-    Token users_id_token(TokenType::IDENTIFIER, "users", 0, 1);
-    Token dot_token(TokenType::DOT, ".", 0, 1);
-    Token where_token(TokenType::DBL_PERCENT, "%%", 0, 1);
-    Token age_id_token(TokenType::IDENTIFIER, "age", 0, 1);
-    Token gt_token(TokenType::GREATER, ">", 0, 1);
-    Token number_literal(TokenType::NUMBER, "30", 30, 1);
-    Token semicolon_token(TokenType::SEMICOLON, ";", 0, 1);
-
-    auto age_column = std::make_shared<Column>();
-    age_column->name = "age";
-    auto thirty_literal = std::make_shared<LiteralExpr>(30.0);
-    auto age_condition = std::make_shared<ColumnCondition>(age_column, gt_token, thirty_literal);    
-    auto full_condition = std::make_shared<Condition>(age_condition);
-    auto where_clause = std::make_shared<WhereClause>(full_condition);
-    auto users_base = std::make_shared<IDTableBase>(std::make_shared<IdentifierExpr>(users_id_token));
-    auto table_expr = std::make_shared<TableExpr>(users_base);
-    table_expr->chainedOps.push_back(where_clause);
-
-    auto statement = std::make_shared<Stat>(id_token, table_expr);
-    auto program = std::make_shared<Program>();
-    program->statements.push_back(statement);
-
-    std::cout << "Successfully built AST for 'tbl active_users = users.WHERE(age > 30);'." << std::endl;
-    std::cout << "The created AST nodes are ready to be used by your parser." << std::endl;
-}
-
