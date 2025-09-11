@@ -163,7 +163,7 @@ Token Parser::consume(TokenType type, const std::string& message) {
         return advance();
     }
     error(peek(), message);
-    return Token(type, "", 0, 0); // Dummy return
+    return Token(type, "", 0, 0);
 }
 
 void Parser::error(const Token& token, const std::string& message) {
