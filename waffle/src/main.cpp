@@ -8,7 +8,7 @@
 #include "scanner.h"
 #include "parser.h"
 #include "sql_generator.h"
-#include "operators.h"
+#include "ast_node.h"
 
 int runFile(std::string filePath) {
     // Read file contents
@@ -31,15 +31,15 @@ int runFile(std::string filePath) {
         }
 
         // 2. Parse tokens and build the AST
-        Parser parser(tokens);
-        auto ast = parser.parse();
-        std::cout << "\nAST built successfully." << std::endl;
+        // Parser parser(tokens);
+        // auto ast = parser.parse();
+        // std::cout << "\nAST built successfully." << std::endl;
 
         // 3. Generate SQL from the AST
-        SQLGenerator sqlGen;
-        std::string sqlOutput = sqlGen.generate(ast);
-        std::cout << "\nGenerated SQL:" << std::endl;
-        std::cout << sqlOutput << std::endl;
+        // SQLGenerator sqlGen;
+        // std::string sqlOutput = sqlGen.generate(ast);
+        // std::cout << "\nGenerated SQL:" << std::endl;
+        // std::cout << sqlOutput << std::endl;
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

@@ -14,7 +14,5 @@ add_executable(
     waffle 
     src/main.cpp
     src/scanner.cpp
-    src/token.cpp
-    src/parser.cpp
-    src/sql_generator.cpp
+    src/token.cpp    
 )

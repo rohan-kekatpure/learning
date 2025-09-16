@@ -7,7 +7,7 @@
 #include <sstream>
 
 #include "token.h"
-#include "operators.h"
+#include "ast_node.h"
 
 class Parser {
 public:
@@ -15,17 +15,12 @@ public:
     std::shared_ptr<Program> parse();
 
 private:
-    std::shared_ptr<Stat> stat();
-    std::shared_ptr<TableExpr> table();
-    std::shared_ptr<TableBase> tableBase();
-    std::vector<std::shared_ptr<TableTailOp>> tableTail();
-    std::shared_ptr<WhereClause> whereClause();
-    std::shared_ptr<GroupByClause> groupByClause();
+    std::shared_ptr<Stmt> stmt();
+    std::shared_ptr<Table> table();            
     std::shared_ptr<Condition> condition();
-    std::shared_ptr<ColumnCondition> columnCondition();
+    std::shared_ptr<ConditionList> conditionList();
     std::shared_ptr<Column> column();
-    std::shared_ptr<ColumnList> columnList();
-    std::shared_ptr<Expr> literalOrColumn();
+    std::shared_ptr<ColumnList> columnList();    
 
     // Helper functions
     bool match(TokenType type);

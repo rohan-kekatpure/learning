@@ -1,3 +1,1 @@
 tbl A = clients_client_list;
-tbl B = sum(cca);
-
