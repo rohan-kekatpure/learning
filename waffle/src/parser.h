@@ -3,37 +3,59 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 #include <stdexcept>
-#include <sstream>
 
 #include "token.h"
 #include "ast_node.h"
 
-class Parser {
+class ParseError : public std::runtime_error {
 public:
-    explicit Parser(const std::vector<Token>& tokens) : tokens_(tokens), current_(0) {}
-    std::shared_ptr<Program> parse();
+    ParseError(const std::string& message) : std::runtime_error(message) {}
+};
 
+class Parser {
 private:
-    std::shared_ptr<Stmt> stmt();
-    std::shared_ptr<Table> table();            
-    std::shared_ptr<Condition> condition();
-    std::shared_ptr<ConditionList> conditionList();
-    std::shared_ptr<Column> column();
-    std::shared_ptr<ColumnList> columnList();    
+    std::vector<Token> tokens;
+    int current = 0;
 
-    // Helper functions
-    bool match(TokenType type);
-    bool check(TokenType type);
-    Token advance();
+    // Utility methods
     bool isAtEnd();
     Token peek();
     Token previous();
-    Token consume(TokenType type, const std::string& message);
-    void error(const Token& token, const std::string& message);
+    Token advance();
+    bool check(TokenType type);
+    bool match(std::vector<TokenType> types);
+    bool match(TokenType type);
+    void consume(TokenType type, const std::string& message);
+    
+    // Parsing methods following the grammar
+    std::shared_ptr<Program> program();
+    AstNodePtr statement();
+    AstNodePtr tableStatement();
+    AstNodePtr resultStatement();
+    TablePtr table();
+    AstNodePtr tableSource();
+    ColumnPtr column();
+    ColumnListPtr columnList();
+    ConditionListPtr conditions();
+    ConditionPtr condition();
+    AstNodePtr primary();
+    std::shared_ptr<LiteralNode> literal();
+    std::shared_ptr<Identifier> identifier();
+    
+    // Helper methods
+    LogicalOp parseLogicalOperator();
+    Token parseComparisonOperator();
+    Literal parseLiteralValue();
+    
+    // Error handling
+    void synchronize();
+    ParseError error(const Token& token, const std::string& message);
 
-    const std::vector<Token>& tokens_;
-    int current_;
+public:
+    Parser(const std::vector<Token>& tokens);
+    std::shared_ptr<Program> parse();
 };
 
-#endif
+#endif // WAFFLE_PARSER_H

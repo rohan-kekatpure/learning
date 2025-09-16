@@ -24,10 +24,11 @@ using TablePtr = std::shared_ptr<Table>;
 class AstNode {};
 
 class Column : public AstNode {
+    public:
     std::string name;
     std::string parentTable;
     std::string alias;
-    public:
+
     Column(std::string name, std::string parentTable)
         : name{name}, parentTable{parentTable} {}
     Column(std::string name, std::string parentTable, std::string alias)

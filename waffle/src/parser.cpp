@@ -1,173 +1,324 @@
-// #include "token.h"
-// #include "parser.h"
+#include "parser.h"
+#include <iostream>
 
-// std::shared_ptr<Program> Parser::parse() {
-//     auto program = std::make_shared<Program>();
-//     while (!isAtEnd()) {
-//         program->statements.push_back(stat());
-//     }
-//     return program;
-// }
+Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens) {}
 
-// std::shared_ptr<Stat> Parser::stat() {
-//     consume(TokenType::TBL, "Expected 'tbl'.");
-//     Token id = consume(TokenType::IDENTIFIER, "Expected table name after 'tbl'.");
-//     consume(TokenType::EQUAL, "Expected '=' after table name.");
-//     auto tableExpr = table();
-//     consume(TokenType::SEMICOLON, "Expected ';' after table expression.");
-//     return std::make_shared<Stat>(id, tableExpr);
-// }
+// Utility methods
+bool Parser::isAtEnd() {
+    return peek().tokenType == TokenType::_EOF;
+}
 
-// std::shared_ptr<TableExpr> Parser::table() {
-//     auto base = tableBase();
-//     auto tableExpr = std::make_shared<TableExpr>(base);
-//     tableExpr->chainedOps = tableTail();
-//     return tableExpr;
-// }
+Token Parser::peek() {
+    return tokens[current];
+}
 
-// std::shared_ptr<TableBase> Parser::tableBase() {
-//     if (check(TokenType::IDENTIFIER)) {
-//         return std::make_shared<IDTableBase>(std::make_shared<IdentifierExpr>(advance()));
-//     } else if (check(TokenType::TILDE) || check(TokenType::DOT) || check(TokenType::IDENTIFIER)) {
-//         auto col = column();
-//         if (match(TokenType::COMMA)) {
-//             // It's a column list
-//             auto list = std::make_shared<ColumnList>();
-//             list->columns.push_back(col);
-//             do {
-//                 list->columns.push_back(column());
-//             } while (match(TokenType::COMMA));
-//             return std::make_shared<ColumnListTableBase>(list);
-//         }
-//         // It's a single column
-//         return std::make_shared<ColumnTableBase>(col);
-//     }
-//     error(peek(), "Expected a table base (ID, column, or column list).");
-//     return nullptr;
-// }
+Token Parser::previous() {
+    return tokens[current - 1];
+}
 
-// std::vector<std::shared_ptr<TableTailOp>> Parser::tableTail() {
-//     std::vector<std::shared_ptr<TableTailOp>> ops;
-//     while (check(TokenType::DBL_PERCENT) || check(TokenType::DBL_COLON)) {
-//         if (match(TokenType::DBL_PERCENT)) {
-//             ops.push_back(whereClause());
-//         } else if (match(TokenType::DBL_COLON)) {
-//             ops.push_back(groupByClause());
-//         }
-//     }
-//     return ops;
-// }
+Token Parser::advance() {
+    if (!isAtEnd()) current++;
+    return previous();
+}
 
-// std::shared_ptr<WhereClause> Parser::whereClause() {
-//     auto cond = condition();
-//     return std::make_shared<WhereClause>(cond);
-// }
+bool Parser::check(TokenType type) {
+    if (isAtEnd()) return false;
+    return peek().tokenType == type;
+}
 
-// std::shared_ptr<GroupByClause> Parser::groupByClause() {
-//     auto col = column();
-//     return std::make_shared<GroupByClause>(col);
-// }
+bool Parser::match(std::vector<TokenType> types) {
+    for (TokenType type : types) {
+        if (check(type)) {
+            advance();
+            return true;
+        }
+    }
+    return false;
+}
 
-// std::shared_ptr<Condition> Parser::condition() {
-//     auto baseCond = columnCondition();
-//     auto cond = std::make_shared<Condition>(baseCond);
-//     while (match(TokenType::AND) || match(TokenType::OR)) {
-//         Token op = previous();
-//         auto nextCond = columnCondition();
-//         cond->tail.push_back({op, nextCond});
-//     }
-//     return cond;
-// }
+bool Parser::match(TokenType type) {
+    if (check(type)) {
+        advance();
+        return true;
+    }
+    return false;
+}
 
-// std::shared_ptr<ColumnCondition> Parser::columnCondition() {
-//     auto left = column();
-//     Token op = advance();
-//     if (! (op.toString().find("GREATER") != std::string::npos ||
-//            op.toString().find("LESS") != std::string::npos ||
-//            op.toString().find("EQUAL") != std::string::npos ||
-//            op.toString().find("BANG_EQUAL") != std::string::npos)) {
-//         error(op, "Expected a comparison operator.");
-//     }
-//     auto right = literalOrColumn();
-//     return std::make_shared<ColumnCondition>(left, op, right);
-// }
+void Parser::consume(TokenType type, const std::string& message) {
+    if (check(type)) {
+        advance();
+        return;
+    }
+    throw error(peek(), message);
+}
 
-// std::shared_ptr<Column> Parser::column() {
-//     auto base_column = std::make_shared<Column>();
-//     base_column->name = consume(TokenType::IDENTIFIER, "Expected column identifier.").toString();
+ParseError Parser::error(const Token& token, const std::string& message) {
+    std::string errorMsg = "Parse error at line " + std::to_string(token.line) + 
+                          ": " + message + " (found '" + token.lexeme + "')";
+    return ParseError(errorMsg);
+}
+
+void Parser::synchronize() {
+    advance();
+    while (!isAtEnd()) {
+        if (previous().tokenType == TokenType::SEMICOLON) return;
+        
+        switch (peek().tokenType) {
+            case TokenType::TBL:
+            case TokenType::RSET:
+                return;
+            default:
+                break;
+        }
+        advance();
+    }
+}
+
+// Main parsing entry point
+std::shared_ptr<Program> Parser::parse() {
+    try {
+        return program();
+    } catch (const ParseError& error) {
+        std::cerr << error.what() << std::endl;
+        synchronize();
+        return nullptr;
+    }
+}
+
+// Grammar rule implementations
+std::shared_ptr<Program> Parser::program() {
+    auto prog = std::make_shared<Program>();
     
-//     if (match(TokenType::DOT)) {
-//         base_column->parentTable = column();
-//     }
-//     if (match(TokenType::TILDE)) {
-//         Token aliasToken = consume(TokenType::IDENTIFIER, "Expected alias after '~'.");
-//         base_column->alias = aliasToken.toString();
-//     }
-//     return base_column;
-// }
+    while (!isAtEnd()) {
+        try {
+            auto stmt = statement();
+            if (stmt) {
+                prog->addStatement(stmt);
+            }
+        } catch (const ParseError& error) {
+            std::cerr << error.what() << std::endl;
+            synchronize();
+        }
+    }
+    
+    return prog;
+}
 
-// std::shared_ptr<ColumnList> Parser::columnList() {
-//     auto list = std::make_shared<ColumnList>();
-//     list->columns.push_back(column());
-//     while (match(TokenType::COMMA)) {
-//         list->columns.push_back(column());
-//     }
-//     return list;
-// }
+AstNodePtr Parser::statement() {
+    if (match(TokenType::TBL)) {
+        return tableStatement();
+    }
+    
+    if (match(TokenType::RSET)) {
+        return resultStatement();
+    }
+    
+    throw error(peek(), "Expected 'tbl' or 'rset'");
+}
 
-// std::shared_ptr<Expr> Parser::literalOrColumn() {
-//     if (check(TokenType::NUMBER) || check(TokenType::STRING)) {
-//         return std::make_shared<LiteralExpr>(advance().literal);
-//     } else if (check(TokenType::IDENTIFIER)) {
-//         return column();
-//     }
-//     error(peek(), "Expected a literal or column.");
-//     return nullptr;
-// }
+AstNodePtr Parser::tableStatement() {
+    // We already consumed TBL
+    Token nameToken = peek();
+    consume(TokenType::IDENTIFIER, "Expected table name");
+    std::string tableName = nameToken.lexeme;
+    
+    consume(TokenType::EQUAL, "Expected '=' after table name");
+    
+    TablePtr tableExpr = table();
+    
+    consume(TokenType::SEMICOLON, "Expected ';' after table statement");
+    
+    return std::make_shared<TableStmt>(tableName, tableExpr);
+}
 
-// // Helper methods
-// bool Parser::match(TokenType type) {
-//     if (check(type)) {
-//         advance();
-//         return true;
-//     }
-//     return false;
-// }
+AstNodePtr Parser::resultStatement() {
+    // We already consumed RSET
+    Token nameToken = peek();
+    consume(TokenType::IDENTIFIER, "Expected result set name");
+    std::string resultName = nameToken.lexeme;
+    
+    consume(TokenType::SEMICOLON, "Expected ';' after result statement");
+    
+    return std::make_shared<ResultStmt>(resultName);
+}
 
-// bool Parser::check(TokenType type) {
-//     if (isAtEnd()) return false;
-//     return peek().tokenType == type;
-// }
+TablePtr Parser::table() {
+    // Parse table source (ID | column | columnlist)
+    AstNodePtr source = tableSource();
+    auto tableNode = std::make_shared<Table>(source);
+    
+    // Optional WHERE clause
+    if (match(TokenType::DBL_PERCENT)) { // %%
+        ConditionListPtr whereConditions = conditions();
+        tableNode->setWhereClause(whereConditions);
+    }
+    
+    // Optional GROUP BY clause  
+    if (match(TokenType::DBL_COLON)) { // ::
+        ColumnListPtr groupByColumns = columnList();
+        tableNode->setGroupByClause(groupByColumns);
+    }
+    
+    return tableNode;
+}
 
-// Token Parser::advance() {
-//     if (!isAtEnd()) {
-//         current_++;
-//     }
-//     return previous();
-// }
+AstNodePtr Parser::tableSource() {
+    // Check if it's a column list (starts with column)
+    if (check(TokenType::IDENTIFIER)) {
+        // Look ahead to see if this is a single identifier or part of a column/columnlist
+        int savePoint = current;
+        
+        // Try to parse as column first
+        try {
+            auto col = column();
+            
+            // If next token is comma, it's a column list
+            if (check(TokenType::COMMA)) {
+                current = savePoint; // Reset and parse as column list
+                return columnList();
+            }
+            
+            // If it has dot or tilde, it's definitely a column
+            if (col->parentTable != "" || col->alias != "") {
+                current = savePoint; // Reset
+                return column();
+            }
+            
+            // Otherwise it's just an identifier
+            current = savePoint; // Reset
+            return identifier();
+            
+        } catch (const ParseError&) {
+            current = savePoint; // Reset on error
+            return identifier();
+        }
+    }
+    
+    throw error(peek(), "Expected table source (identifier, column, or column list)");
+}
 
-// bool Parser::isAtEnd() {
-//     return peek().tokenType == TokenType::_EOF;
-// }
+ColumnPtr Parser::column() {
+    Token nameToken = peek();
+    consume(TokenType::IDENTIFIER, "Expected column name");
+    std::string columnName = nameToken.lexeme;
+    std::string parentTable = "";
+    std::string alias = "";
+    
+    // Handle DOT notation (table.column)
+    if (match(TokenType::DOT)) {
+        parentTable = columnName;
+        Token columnToken = peek();
+        consume(TokenType::IDENTIFIER, "Expected column name after '.'");
+        columnName = columnToken.lexeme;
+    }
+    
+    // Handle TILDE notation (column~alias)
+    if (match(TokenType::TILDE)) {
+        Token aliasToken = peek();
+        consume(TokenType::IDENTIFIER, "Expected alias after '~'");
+        alias = aliasToken.lexeme;
+    }
+    
+    if (alias.empty()) {
+        return std::make_shared<Column>(columnName, parentTable);
+    } else {
+        return std::make_shared<Column>(columnName, parentTable, alias);
+    }
+}
 
-// Token Parser::peek() {
-//     return tokens_[current_];
-// }
+ColumnListPtr Parser::columnList() {
+    std::vector<ColumnPtr> columns;
+    
+    columns.push_back(column());
+    
+    while (match(TokenType::COMMA)) {
+        columns.push_back(column());
+    }
+    
+    return std::make_shared<ColumnList>(columns);
+}
 
-// Token Parser::previous() {
-//     return tokens_[current_ - 1];
-// }
+ConditionListPtr Parser::conditions() {
+    std::vector<ConditionPtr> condList;
+    std::vector<LogicalOp> opList;
+    
+    condList.push_back(condition());
+    
+    while (match({TokenType::AND, TokenType::OR})) {
+        LogicalOp op = (previous().tokenType == TokenType::AND) ? LogicalOp::AND : LogicalOp::OR;
+        opList.push_back(op);
+        condList.push_back(condition());
+    }
+    
+    return std::make_shared<ConditionList>(condList, opList);
+}
 
-// Token Parser::consume(TokenType type, const std::string& message) {
-//     if (check(type)) {
-//         return advance();
-//     }
-//     error(peek(), message);
-//     return Token(type, "", 0, 0);
-// }
+ConditionPtr Parser::condition() {
+    AstNodePtr left = primary();
+    
+    // Parse comparison operator
+    if (!match({TokenType::GREATER, TokenType::GREATER_EQUAL, TokenType::LESS, 
+                TokenType::LESS_EQUAL, TokenType::EQUAL_EQUAL, TokenType::BANG_EQUAL})) {
+        throw error(peek(), "Expected comparison operator");
+    }
+    
+    Token op = previous();
+    AstNodePtr right = primary();
+    
+    return std::make_shared<Condition>(left, op, right);
+}
 
-// void Parser::error(const Token& token, const std::string& message) {
-//     std::stringstream ss;
-//     ss << "Parse Error at line " << token.line << ": " << message;
-//     throw std::runtime_error(ss.str());
-// }
+AstNodePtr Parser::primary() {
+    if (check(TokenType::NUMBER) || check(TokenType::STRING) || 
+        check(TokenType::NIL) || peek().lexeme == "true" || peek().lexeme == "false") {
+        return literal();
+    }
+    
+    if (check(TokenType::IDENTIFIER)) {
+        // Could be column or identifier - try column first
+        int savePoint = current;
+        try {
+            return column();
+        } catch (const ParseError&) {
+            current = savePoint;
+            return identifier();
+        }
+    }
+    
+    throw error(peek(), "Expected literal, column, or identifier");
+}
+
+std::shared_ptr<LiteralNode> Parser::literal() {
+    if (match(TokenType::NUMBER)) {
+        return std::make_shared<LiteralNode>(previous().literal);
+    }
+    
+    if (match(TokenType::STRING)) {
+        return std::make_shared<LiteralNode>(previous().literal);
+    }
+    
+    if (match(TokenType::NIL)) {
+        return std::make_shared<LiteralNode>(nullptr);
+    }
+    
+    // Handle boolean literals
+    if (check(TokenType::IDENTIFIER)) {
+        Token token = peek();
+        if (token.lexeme == "true") {
+            advance();
+            return std::make_shared<LiteralNode>(true);
+        }
+        if (token.lexeme == "false") {
+            advance();
+            return std::make_shared<LiteralNode>(false);
+        }
+    }
+    
+    throw error(peek(), "Expected literal value");
+}
+
+std::shared_ptr<Identifier> Parser::identifier() {
+    Token nameToken = peek();
+    consume(TokenType::IDENTIFIER, "Expected identifier");
+    return std::make_shared<Identifier>(nameToken.lexeme);
+}
