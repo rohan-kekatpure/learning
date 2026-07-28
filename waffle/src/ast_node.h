@@ -83,10 +83,6 @@ class Identifier : public AstNode {
     Identifier(std::string name) : name{name} {}
 };
 
-class Program : public AstNode {
-    std::vector<AstNodePtr> statements;    
-};
-
 enum class TableClause {
     WHERE, 
     GROUPBY

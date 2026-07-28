@@ -31,9 +31,9 @@ int runFile(std::string filePath) {
         }
 
         // 2. Parse tokens and build the AST
-        // Parser parser(tokens);
-        // auto ast = parser.parse();
-        // std::cout << "\nAST built successfully." << std::endl;
+        Parser parser(tokens);
+        auto ast = parser.parse();
+        std::cout << "\nAST built successfully." << std::endl;
 
         // 3. Generate SQL from the AST
         // SQLGenerator sqlGen;

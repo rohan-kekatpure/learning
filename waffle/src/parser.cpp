@@ -121,11 +121,9 @@ AstNodePtr Parser::tableStatement() {
     Token nameToken = peek();
     consume(TokenType::IDENTIFIER, "Expected table name");
     std::string tableName = nameToken.lexeme;
-    
     consume(TokenType::EQUAL, "Expected '=' after table name");
     
     TablePtr tableExpr = table();
-    
     consume(TokenType::SEMICOLON, "Expected ';' after table statement");
     
     return std::make_shared<TableStmt>(tableName, tableExpr);

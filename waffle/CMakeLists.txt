@@ -15,4 +15,5 @@ add_executable(
     src/main.cpp
     src/scanner.cpp
     src/token.cpp    
+    src/parser.cpp
 )

@@ -1,0 +1,7 @@
+{
+  "name": "fem-em-solver",
+  "version-string": "0.1.0",
+  "dependencies": [
+    "eigen3"
+  ]
+}
