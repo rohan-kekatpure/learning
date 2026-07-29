@@ -121,9 +121,55 @@ Solution solveDWeak(
     return s;    
 }
 
-Solution solveDMD() {
-    return Solution();
+Solution solveDMD(
+    const double k0, 
+    const double h, 
+    const Scalar epsCore, 
+    const Scalar epsCover, 
+    const Scalar epsSubstr, 
+    const Scalar p, 
+    const Scalar q, 
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const double maxTol, 
+    const unsigned int maxIter
+) {        
+    Scalar ac, as, S;
+
+    // Initialize solution s with default values
+    const auto Kc = k0 * std::sqrt(epsCore - epsCover);
+    const auto Ks = k0 * std::sqrt(epsCore - epsSubstr);
+    auto kappa = k0 * std::sqrt(neffGuess * neffGuess - epsCore);
+    Scalar neffPrev;
+    double sign = parity == Parity::EVEN? 1 : -1;
+    Solution s{};
+
+    Scalar t1, t2;
+    // core loop
+    while ((s.tol > maxTol) && (s.niter < maxIter)) {
+        neffPrev = s.effectiveIndex;
+        ac = _rss(Kc, kappa);
+        as = _rss(Ks, kappa);
+        S = 0.5 * (p * ac + q * as);
+        t1 = S / std::tanh(kappa * h);
+        t2 = t1 * t1 - p * q * ac * as;
+        kappa = -t1 + sign * std::sqrt(t2);
+        s.effectiveIndex = std::sqrt(epsCore + (kappa * kappa) / (k0 * k0));
+        s.tol = std::abs(s.effectiveIndex - neffPrev);
+        s.niter++;
+    }
+
+    if (s.tol < maxTol) {
+        s.converged = true;        
+    }
+
+    if (s.niter >= maxIter) {
+        s.maxIterReached = true;
+    }    
+
+    return s;
 }
+
 
 Solution solveMDM() {
     return Solution();
@@ -145,7 +191,7 @@ Solution Solver::solve() {
     const auto& M = modeOptions.index;
 
     Scalar p = 1.0, q = 1.0;
-    if (pol == Polarization::TM) {
+    if ((pol == Polarization::TM) || (modeOptions.type == ModeType::DMD)) {
         p = ef / ec;
         q = ef / es;
     }
@@ -158,9 +204,8 @@ Solution Solver::solve() {
     switch(modeOptions.type) {
         case ModeType::DIELECTRIC_STRONG:
             sol = solveDStrong(
-                k0, h, ef, ec, es, p, q, M, 
-                modeOptions.parity, nguess, 
-                maxTol, maxIter
+                k0, h, ef, ec, es, p, q, M, modeOptions.parity, 
+                nguess, maxTol, maxIter
             );
             break;
         case ModeType::DIELECTRIC_WEAK:
@@ -170,7 +215,10 @@ Solution Solver::solve() {
             );
             break;
         case ModeType::DMD:
-            sol = solveDMD();
+            sol = solveDMD(
+                k0, h, ef, ec, es, p, q, modeOptions.parity, 
+                nguess, maxTol, maxIter                
+            );
             break;
         case ModeType::MDM:
             sol = solveMDM();
