@@ -5,26 +5,28 @@
 #include <limits.h>
 #include <numbers>
 
-using Scalar = std::complex<double>;
+using Real = double;
+using Scalar = std::complex<Real>;
 
-constexpr auto UM = 1e-6;
-constexpr auto NM = 1e-9;
-constexpr auto PI = std::numbers::pi;
-constexpr auto INFTY = std::numeric_limits<double>::infinity();
+
+constexpr auto UM = static_cast<Real>(1e-6);
+constexpr auto NM = static_cast<Real>(1e-9);
+constexpr auto PI = static_cast<Real>(std::numbers::pi);
+constexpr auto INFTY = std::numeric_limits<Real>::infinity();
 
 enum class Polarization {TE, TM};
 enum class Parity {ODD, EVEN};
 enum class ModeType {DIELECTRIC_STRONG, DIELECTRIC_WEAK, DMD, MDM};
 
 struct Waveguide {    
-    double coreThickness{1 * UM};
+    Real coreThickness{1 * UM};
     Scalar coreEps{3.5 * 3.5};
     Scalar coverEps{1.0};
     Scalar substrEps{1.5 * 1.5};
 
     //ctor
     Waveguide(
-        double coreThickness, 
+        Real coreThickness, 
         Scalar coreEps, 
         Scalar coverEps, 
         Scalar substrEps
@@ -33,7 +35,7 @@ struct Waveguide {
 };
 
 struct ModeOptions {
-    double lambda0 = 1550 * NM; // vacuum wavelength    
+    Real lambda0 = 1550 * NM; // vacuum wavelength    
     Polarization polarization = Polarization::TE;
     Parity parity = Parity::EVEN;
     ModeType type = ModeType::DIELECTRIC_STRONG;
@@ -44,7 +46,7 @@ struct ModeOptions {
     ModeOptions() {}
 
     ModeOptions(
-        double lambda0, Polarization pol, Parity par, 
+        Real lambda0, Polarization pol, Parity par, 
         ModeType mt, unsigned int i, Scalar neff0
     ) 
     : polarization{pol}, parity{par}, type{mt}, 
@@ -52,13 +54,13 @@ struct ModeOptions {
 };
 
 struct SolverOptions {
-    double maxTol{1e-6};
-    double maxIter{1000};
+    Real maxTol{1e-6};
+    Real maxIter{1000};
 
     //ctors
     SolverOptions() {}
     
-    SolverOptions(double maxTol, double maxIter)
+    SolverOptions(Real maxTol, Real maxIter)
     :maxTol{maxTol}, maxIter{maxIter} {}
 };
 
@@ -67,7 +69,7 @@ struct Solution {
     Scalar effectiveIndex = 1.0;
 
     // convergence info
-    double tol = INFTY;
+    Real tol = INFTY;
     unsigned int niter = 0;
     bool converged = false;
     bool maxIterReached = false;
@@ -76,7 +78,7 @@ struct Solution {
     Solution() {}
 
     Solution(
-        double tol, unsigned int niter, bool converged, 
+        Real tol, unsigned int niter, bool converged, 
         bool maxIterReached, Scalar effectiveIndex
     ): tol{tol}, niter{niter}, converged{converged}, 
     maxIterReached{maxIterReached}, effectiveIndex{effectiveIndex} {}

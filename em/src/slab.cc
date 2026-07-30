@@ -16,8 +16,8 @@ inline auto _rss(Scalar x, Scalar y) {
 }
 
 Solution solveDStrong(
-    const double k0, 
-    const double h, 
+    const Real k0, 
+    const Real h, 
     const Scalar epsCore, 
     const Scalar epsCover, 
     const Scalar epsSubstr, 
@@ -26,7 +26,7 @@ Solution solveDStrong(
     unsigned int modeIndex, 
     const Parity parity, 
     const Scalar neffGuess, 
-    const double maxTol, 
+    const Real maxTol, 
     const unsigned int maxIter
 ) {        
     Scalar gc, gs, Gc, Gs, num, denom;
@@ -37,7 +37,7 @@ Solution solveDStrong(
     auto k = k0 * std::sqrt(epsCore - neffGuess * neffGuess);
     auto M = modeIndex;
     Scalar neffPrev;
-    double sign = parity == Parity::EVEN? 1 : -1;
+    Real sign = parity == Parity::EVEN? 1 : -1;
     Solution s{};
 
     // core loop
@@ -67,8 +67,8 @@ Solution solveDStrong(
 }
 
 Solution solveDWeak(
-    const double k0, 
-    const double h, 
+    const Real k0, 
+    const Real h, 
     const Scalar epsCore, 
     const Scalar epsCover, 
     const Scalar epsSubstr, 
@@ -76,7 +76,7 @@ Solution solveDWeak(
     const Scalar q, 
     const Parity parity, 
     const Scalar neffGuess, 
-    const double maxTol, 
+    const Real maxTol, 
     const unsigned int maxIter
 ) {    
     // Initialize solution s with default values
@@ -84,7 +84,7 @@ Solution solveDWeak(
     const auto Ks = k0 * std::sqrt(epsCore - epsSubstr);
     auto k = k0 * std::sqrt(epsCore - neffGuess * neffGuess);
     Scalar neffPrev;
-    double sign = parity == Parity::EVEN? -1 : 1;
+    Real sign = parity == Parity::EVEN? -1 : 1;
     Scalar gc, gs, Gc, Gs, num, denom;
 
     Solution s{};
@@ -98,10 +98,10 @@ Solution solveDWeak(
         t1 = p * q * Kc * Ks;
         t2 = Gc * Gs * std::cos(k * h);
         p2q2 = p * p * q * q;
-        t3 = (p2q2 - 1.) * (k * k * k * k);
+        t3 = (p2q2 - static_cast<Real>(1.)) * (k * k * k * k);
         t4 = p2q2 * (Kc * Kc + Ks * Ks);
         num = (t1 * t1) - (t2 * t2) + t3;
-        denom = t4 + sign * 2.0 * t2;
+        denom = t4 + sign * static_cast<Real>(2.0) * t2;
         k = std::sqrt(num / denom);        
         s.effectiveIndex = std::sqrt(epsCore - (k * k) / (k0 * k0));
         s.tol = std::abs(s.effectiveIndex - neffPrev);
@@ -121,9 +121,9 @@ Solution solveDWeak(
     return s;    
 }
 
-Solution solveDMD(
-    const double k0, 
-    const double h, 
+Solution solveMDM(
+    const Real k0, 
+    const Real h, 
     const Scalar epsCore, 
     const Scalar epsCover, 
     const Scalar epsSubstr, 
@@ -131,7 +131,7 @@ Solution solveDMD(
     const Scalar q, 
     const Parity parity, 
     const Scalar neffGuess, 
-    const double maxTol, 
+    const Real maxTol, 
     const unsigned int maxIter
 ) {        
     Scalar ac, as, S;
@@ -141,19 +141,20 @@ Solution solveDMD(
     const auto Ks = k0 * std::sqrt(epsCore - epsSubstr);
     auto kappa = k0 * std::sqrt(neffGuess * neffGuess - epsCore);
     Scalar neffPrev;
-    double sign = parity == Parity::EVEN? 1 : -1;
+    Real sign = parity == Parity::EVEN? 1 : -1;
     Solution s{};
 
     Scalar t1, t2;
     // core loop
-    while ((s.tol > maxTol) && (s.niter < maxIter)) {
-        neffPrev = s.effectiveIndex;
+    while ((s.tol > maxTol) && (s.niter < maxIter)) {        
         ac = _rss(Kc, kappa);
         as = _rss(Ks, kappa);
-        S = 0.5 * (p * ac + q * as);
+        S = (p * ac + q * as) / static_cast<Real>(2.0);
         t1 = S / std::tanh(kappa * h);
         t2 = t1 * t1 - p * q * ac * as;
         kappa = -t1 + sign * std::sqrt(t2);
+
+        neffPrev = s.effectiveIndex;
         s.effectiveIndex = std::sqrt(epsCore + (kappa * kappa) / (k0 * k0));
         s.tol = std::abs(s.effectiveIndex - neffPrev);
         s.niter++;
@@ -171,7 +172,7 @@ Solution solveDMD(
 }
 
 
-Solution solveMDM() {
+Solution solveDMD() {
     return Solution();
 }
 
@@ -191,12 +192,12 @@ Solution Solver::solve() {
     const auto& M = modeOptions.index;
 
     Scalar p = 1.0, q = 1.0;
-    if ((pol == Polarization::TM) || (modeOptions.type == ModeType::DMD)) {
+    if (pol == Polarization::TM) {
         p = ef / ec;
         q = ef / es;
     }
 
-    const auto k0 = 2 * PI / modeOptions.lambda0;    
+    const auto k0 = static_cast<Real>(2.) * PI / modeOptions.lambda0;    
 
     // Set setup status to true
     isSetup = true;    
@@ -214,14 +215,14 @@ Solution Solver::solve() {
                 nguess, maxTol, maxIter
             );
             break;
-        case ModeType::DMD:
-            sol = solveDMD(
+        case ModeType::MDM:
+            sol = solveMDM(
                 k0, h, ef, ec, es, p, q, modeOptions.parity, 
                 nguess, maxTol, maxIter                
             );
             break;
-        case ModeType::MDM:
-            sol = solveMDM();
+        case ModeType::DMD:
+            sol = solveDMD();
             break;
         default:
             break;
