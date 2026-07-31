@@ -43,7 +43,7 @@ def default(
     solveropts = emm.SolverOptions(max_tol, max_iter)
     solver = emm.Solver(waveguide, solveropts, modeopts)
     sol = solver.solve()
-
+    print(sol.niter)
     assert sol.converged
     assert not sol.max_iter_reached
     assert sol.tol <= solveropts.max_tol
@@ -141,4 +141,14 @@ def test_MDM_gap_plasmon_even():
     )
 
 if __name__ == '__main__':
+    test_dielectric_strong_TE0()
+    test_dielectric_strong_TE1()
+    test_dielectric_strong_TE2()
+    test_dielectric_strong_TE3()
+    test_dielectric_strong_TM0()
+    test_dielectric_strong_TM1()
+    test_dielectric_strong_TM2()
+    test_dielectric_strong_TM3()
+    test_dielectric_weak_TE0()
+    test_dielectric_weak_TM0()
     test_MDM_gap_plasmon_even()

@@ -49,7 +49,7 @@ Solution solveDStrong(
         Gs = _rss(k, q * gs);
         num = (p * q * gc * gs - k * k) + sign * Gc * Gs;
         denom = k * (p * gc + q * gs);
-        k = (2 / h) * (M * PI + std::atan(num / denom));  
+        k = (TWO / h) * (M * PI + std::atan(num / denom));  
         s.effectiveIndex = std::sqrt(epsCore - (k * k) / (k0 * k0));
         s.tol = std::abs(s.effectiveIndex - neffPrev);
         s.niter++;
@@ -88,9 +88,10 @@ Solution solveDWeak(
     Scalar gc, gs, Gc, Gs, num, denom;
 
     Solution s{};
-    Scalar t1, t2, t3, t4, t5, p2q2;
+    Scalar t1, t2, t3, t4, t5, p2q2, u, v;
     while ((s.tol > maxTol) && (s.niter < maxIter)) {
-        neffPrev = s.effectiveIndex;
+        // core loop
+        u = k;
         gc = _rsd(Kc, k);
         gs = _rsd(Ks, k);
         Gc = _rss(k, p * gc);
@@ -98,11 +99,15 @@ Solution solveDWeak(
         t1 = p * q * Kc * Ks;
         t2 = Gc * Gs * std::cos(k * h);
         p2q2 = p * p * q * q;
-        t3 = (p2q2 - static_cast<Real>(1.)) * (k * k * k * k);
+        t3 = (p2q2 - ONE) * (k * k * k * k);
         t4 = p2q2 * (Kc * Kc + Ks * Ks);
         num = (t1 * t1) - (t2 * t2) + t3;
-        denom = t4 + sign * static_cast<Real>(2.0) * t2;
-        k = std::sqrt(num / denom);        
+        denom = t4 + sign * TWO * t2;
+        v = std::sqrt(num / denom);        
+        k = HALF * (u + v);
+
+        // convergence testing
+        neffPrev = s.effectiveIndex;
         s.effectiveIndex = std::sqrt(epsCore - (k * k) / (k0 * k0));
         s.tol = std::abs(s.effectiveIndex - neffPrev);
         s.niter++;
@@ -140,21 +145,21 @@ Solution solveMDM(
     const auto Kc = k0 * std::sqrt(epsCore - epsCover);
     const auto Ks = k0 * std::sqrt(epsCore - epsSubstr);
     auto kappa = k0 * std::sqrt(neffGuess * neffGuess - epsCore);
-    Scalar neffPrev, kappaPrev, kappaRaw;
+    Scalar neffPrev, u, v;
     Real sign = parity == Parity::EVEN? 1 : -1;
     Solution s{};
 
     Scalar t1, t2;
     // core loop
     while ((s.tol > maxTol) && (s.niter < maxIter)) {        
-        kappaPrev = kappa;
+        u = kappa;
         ac = _rss(Kc, kappa);
         as = _rss(Ks, kappa);
-        S = static_cast<Real>(0.5) * (p * ac + q * as);
+        S = HALF * (p * ac + q * as);
         t1 = S / std::tanh(kappa * h);
         t2 = std::sqrt(p * q * ac * as);
-        kappaRaw = -t1 + sign * std::sqrt((t1 + t2) * (t1 - t2));
-        kappa = 0.5 * (kappaPrev + kappaRaw);
+        v = -t1 + sign * std::sqrt((t1 + t2) * (t1 - t2));
+        kappa = 0.5 * (u + v);
 
         neffPrev = s.effectiveIndex;
         s.effectiveIndex = std::sqrt(epsCore + (kappa * kappa) / (k0 * k0));
@@ -173,13 +178,8 @@ Solution solveMDM(
     return s;
 }
 
-
 Solution solveDMD() {
     return Solution();
-}
-
- Solution solveDWeak() {
-    return Solution(); 
 }
 
 Solution Solver::solve() {    
@@ -199,7 +199,7 @@ Solution Solver::solve() {
         q = ef / es;
     }
 
-    const auto k0 = static_cast<Real>(2.) * PI / modeOptions.lambda0;    
+    const auto k0 = TWO * PI / modeOptions.lambda0;    
 
     // Set setup status to true
     isSetup = true;    
@@ -230,9 +230,6 @@ Solution Solver::solve() {
             break;
     }
 
-    // result fields will be set by one of the 
-    // solve* methods and will be available by 
-    // this time.
     return sol;
 }
 

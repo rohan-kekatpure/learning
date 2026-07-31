@@ -9,9 +9,10 @@ using Real = double;
 using Scalar = std::complex<Real>;
 
 
-constexpr auto UM = static_cast<Real>(1e-6);
-constexpr auto NM = static_cast<Real>(1e-9);
-constexpr auto PI = static_cast<Real>(std::numbers::pi);
+constexpr Real UM = 1e-6;
+constexpr Real NM = 1e-9;
+constexpr Real PI = static_cast<Real>(std::numbers::pi);
+constexpr Real ONE = 1., TWO = 2., HALF = 0.5;
 constexpr auto INFTY = std::numeric_limits<Real>::infinity();
 
 enum class Polarization {TE, TM};

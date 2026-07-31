@@ -25,15 +25,21 @@ def dielectric_strong():
     nguess = 1.5
     neff = nguess
     k = k0 * np.emath.sqrt(ef - nguess * nguess)
+    omega = 0.1
     while ((tol > maxtol) and (niter < maxiter)):
-        nprev = neff
+        # core loop
+        u = k
         gc = np.emath.sqrt(Kc * Kc - k * k)
         gs = np.emath.sqrt(Ks * Ks - k * k)
         Gc = np.emath.sqrt(k * k + gc * gc * p * p)
         Gs = np.emath.sqrt(k * k + gs * gs * q * q)
         num = p * q * gc * gs - k * k + Gc * Gs
         denom = k * (p * gc + q * gs)
-        k = (2 / h) * (M * np.pi + np.arctan(num / denom))    
+        v = (2 / h) * (M * np.pi + np.arctan(num / denom))    
+        k = omega * u + (1 - omega) * v
+
+        # Convergence
+        nprev = neff
         neff = np.emath.sqrt(ef - k * k/(k0 * k0))
         tol = np.abs(nprev - neff)
         print(f'niter->{niter}, neff->{neff}, tol->{tol}')
@@ -80,5 +86,6 @@ def MDM():
         niter += 1    
 
 if __name__ == '__main__':
-    MDM()
+    dielectric_strong()
+    # MDM()
 
