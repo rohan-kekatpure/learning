@@ -43,7 +43,7 @@ def default(
     solveropts = emm.SolverOptions(max_tol, max_iter)
     solver = emm.Solver(waveguide, solveropts, modeopts)
     sol = solver.solve()
-    
+
     assert sol.converged
     assert not sol.max_iter_reached
     assert sol.tol <= solveropts.max_tol
@@ -130,11 +130,11 @@ def test_dielectric_weak_TM0():
         MAXTOL, MAXITER, 3.26338400537407312
     )
 
-@pytest.mark. skip('skipped')
+# @pytest.mark. skip('skipped')
 def test_MDM_gap_plasmon_even():
-    neff = 2.017122399636765 - 0.023755375876767j
+    neff = 2.0171223996367655-0.023755375876767085j
     default(
-        1550 * NM, 2.1025, -143.49 - 9.52j, -95.92 - 10.97j, 50 * NM,
+        1550 * NM, 2.1025, -143.497 - 9.517j, -95.92 - 10.97j, 50 * NM,
         emm.Polarization.TM, emm.Parity.EVEN,
         emm.ModeType.MDM, 0, 1.0,
         MAXTOL, MAXITER, neff

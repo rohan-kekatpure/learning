@@ -4,6 +4,7 @@ um = 1e-6
 nm = 1e-9
 lambda0 = 1550 * nm
 k0 = 2 * np.pi / lambda0
+from IPython import embed
 
 def dielectric_strong():
     h = 1000 * nm
@@ -37,14 +38,14 @@ def dielectric_strong():
         tol = np.abs(nprev - neff)
         print(f'niter->{niter}, neff->{neff}, tol->{tol}')
         niter += 1
-
+    
 def MDM():
     h = 50 * nm
     ef = 1.45 * 1.45
-    ec = -143.49 - 9.52j
+    ec = -143.497 - 9.517j
     es = -95.92 - 10.97j
-    Kc = k0 * np.sqrt(ef - ec)
-    Ks = k0 * np.sqrt(ef - es)
+    Kc = k0 * np.emath.sqrt(ef - ec)
+    Ks = k0 * np.emath.sqrt(ef - es)
     p = ef / ec
     q = ef / es
 
@@ -53,23 +54,29 @@ def MDM():
     maxtol = 1e-16
     maxiter = 1200
 
-    nguess = 1.0
+    nguess = 2 - 1j
     neff = nguess
     kappa = k0 * np.emath.sqrt(ef + nguess * nguess)
     while ((tol > maxtol) and (niter < maxiter)):        
         # core loop for kappa
+        kprev = kappa
         alphac = np.emath.sqrt(Kc ** 2 + kappa ** 2)
         alphas = np.emath.sqrt(Ks ** 2 + kappa ** 2)
-        S = (p * alphac + q * alphas) / 2.0
+        S = 0.5 * (p * alphac + q * alphas)
         t1 = S / np.tanh(kappa * h)
-        t2 = t1 * t1 - p * q * alphac * alphas
-        kappa = -t1 + np.sqrt(t2) 
+        t2 = np.emath.sqrt(p * q * alphac * alphas)
+        v = -t1 + np.emath.sqrt((t1 + t2) * (t1 - t2))        
+        kappa = (kprev + v)/2.0
 
         # convergence testing
         nprev = neff
         neff = np.emath.sqrt(ef + (kappa ** 2)/(k0 ** 2))
         tol = np.abs(nprev - neff)
-        print(f'niter->{niter}, neff->{neff}, tol->{tol}')
+        print(f'kr->{kappa.real:.16f}, ki->{kappa.imag:.16f}')                
+        print(f'acr->{alphac.real:.16f}, aci->{alphac.imag:.16f}')        
+        print(f'asr->{alphas.real:.16f}, asi->{alphas.imag:.16f}')        
+        print(f'niter->{niter}, neff->{neff}, tol->{tol}\n')
+        
         niter += 1    
 
 if __name__ == '__main__':

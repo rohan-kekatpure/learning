@@ -140,19 +140,21 @@ Solution solveMDM(
     const auto Kc = k0 * std::sqrt(epsCore - epsCover);
     const auto Ks = k0 * std::sqrt(epsCore - epsSubstr);
     auto kappa = k0 * std::sqrt(neffGuess * neffGuess - epsCore);
-    Scalar neffPrev;
+    Scalar neffPrev, kappaPrev, kappaRaw;
     Real sign = parity == Parity::EVEN? 1 : -1;
     Solution s{};
 
     Scalar t1, t2;
     // core loop
     while ((s.tol > maxTol) && (s.niter < maxIter)) {        
+        kappaPrev = kappa;
         ac = _rss(Kc, kappa);
         as = _rss(Ks, kappa);
-        S = (p * ac + q * as) / static_cast<Real>(2.0);
+        S = static_cast<Real>(0.5) * (p * ac + q * as);
         t1 = S / std::tanh(kappa * h);
-        t2 = t1 * t1 - p * q * ac * as;
-        kappa = -t1 + sign * std::sqrt(t2);
+        t2 = std::sqrt(p * q * ac * as);
+        kappaRaw = -t1 + sign * std::sqrt((t1 + t2) * (t1 - t2));
+        kappa = 0.5 * (kappaPrev + kappaRaw);
 
         neffPrev = s.effectiveIndex;
         s.effectiveIndex = std::sqrt(epsCore + (kappa * kappa) / (k0 * k0));
