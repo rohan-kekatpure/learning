@@ -36,20 +36,25 @@ Solution solveDStrong(
     const auto Ks = k0 * std::sqrt(epsCore - epsSubstr);
     auto k = k0 * std::sqrt(epsCore - neffGuess * neffGuess);
     auto M = modeIndex;
-    Scalar neffPrev;
+    Scalar neffPrev, u, v;
     Real sign = parity == Parity::EVEN? 1 : -1;
     Solution s{};
 
     // core loop
     while ((s.tol > maxTol) && (s.niter < maxIter)) {
-        neffPrev = s.effectiveIndex;
+        // core loop
+        u = k;
         gc = _rsd(Kc, k);
         gs = _rsd(Ks, k);
         Gc = _rss(k, p * gc);
         Gs = _rss(k, q * gs);
         num = (p * q * gc * gs - k * k) + sign * Gc * Gs;
         denom = k * (p * gc + q * gs);
-        k = (TWO / h) * (M * PI + std::atan(num / denom));  
+        v = (TWO / h) * (M * PI + std::atan(num / denom));  
+        k = HALF * (u + v);
+
+        // Convergence testing 
+        neffPrev = s.effectiveIndex;
         s.effectiveIndex = std::sqrt(epsCore - (k * k) / (k0 * k0));
         s.tol = std::abs(s.effectiveIndex - neffPrev);
         s.niter++;
@@ -152,6 +157,7 @@ Solution solveMDM(
     Scalar t1, t2;
     // core loop
     while ((s.tol > maxTol) && (s.niter < maxIter)) {        
+        // core loop
         u = kappa;
         ac = _rss(Kc, kappa);
         as = _rss(Ks, kappa);
@@ -159,8 +165,9 @@ Solution solveMDM(
         t1 = S / std::tanh(kappa * h);
         t2 = std::sqrt(p * q * ac * as);
         v = -t1 + sign * std::sqrt((t1 + t2) * (t1 - t2));
-        kappa = 0.5 * (u + v);
-
+        kappa = HALF * (u + v);
+        
+        // convergence testing
         neffPrev = s.effectiveIndex;
         s.effectiveIndex = std::sqrt(epsCore + (kappa * kappa) / (k0 * k0));
         s.tol = std::abs(s.effectiveIndex - neffPrev);
