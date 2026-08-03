@@ -185,8 +185,60 @@ Solution solveMDM(
     return s;
 }
 
-Solution solveDMD() {
-    return Solution();
+Solution solveDMD(
+    const Real k0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsCover, 
+    const Scalar epsSubstr, 
+    const Scalar p, 
+    const Scalar q, 
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+) {        
+    Scalar ac, as, S;
+
+    // Initialize solution s with default values
+    const auto Qc = k0 * std::sqrt(epsCover - epsCore);
+    const auto Qs = k0 * std::sqrt(epsSubstr - epsCore);
+    Real sign = parity == Parity::EVEN? 1 : -1;    
+
+    Solution s{};
+    Scalar t1, t2, neffPrev, a, b, A = k0, B = 0, xic, xis, u, v;
+    auto kappa = k0 * std::sqrt(neffGuess * neffGuess - epsCore);
+
+    while ((s.tol > maxTol) && (s.niter < maxIter)) {        
+        // core loop
+        u = kappa;
+        t1 = kappa / std::tanh(kappa * h);
+        t2 = kappa / std::sinh(kappa * h);
+        a = -t1 + sign * std::sqrt(B * B + t2 * t2);
+        b = std::sqrt(a * a + kappa * kappa + TWO * a * t1);
+        v = std::sqrt((a + b) * (a + b) / (p * p) + Qc * Qc);
+        kappa = HALF * (u + v);
+        xic = _rsd(kappa, Qc);
+        xis = _rsd(kappa, Qs);
+        A = HALF * (p * xic + q * xis);
+        B = HALF * (p * xic - q * xis);
+        
+        // convergence testing
+        neffPrev = s.effectiveIndex;
+        s.effectiveIndex = std::sqrt(epsCore + (kappa * kappa) / (k0 * k0));
+        s.tol = std::abs(s.effectiveIndex - neffPrev);
+        s.niter++;
+    }
+
+    if (s.tol < maxTol) {
+        s.converged = true;        
+    }
+
+    if (s.niter >= maxIter) {
+        s.maxIterReached = true;
+    }    
+
+    return s;
 }
 
 Solution Solver::solve() {    
@@ -231,7 +283,10 @@ Solution Solver::solve() {
             );
             break;
         case ModeType::DMD:
-            sol = solveDMD();
+            sol = solveDMD(
+                k0, h, ef, ec, es, p, q, modeOptions.parity, 
+                nguess, maxTol, maxIter                
+            );
             break;
         default:
             break;

@@ -186,7 +186,7 @@ def test_MDM_300nm_TM2():
         1550 * NM, 2.1025, -143.497 - 9.517j, -95.92 - 10.97j, 300 * NM,
         emm.Polarization.TM, emm.Parity.EVEN,
         emm.ModeType.DIELECTRIC_STRONG, 1, 1.0,
-        MAXTOL, 2000, neff
+        MAXTOL, MAXITER, neff
     )
 
 def test_MDM_300nm_TM3():
@@ -198,7 +198,7 @@ def test_MDM_300nm_TM3():
         1550 * NM, 2.1025, -143.497 - 9.517j, -95.92 - 10.97j, 300 * NM,
         emm.Polarization.TM, emm.Parity.ODD,
         emm.ModeType.DIELECTRIC_STRONG, 1, 1.0,
-        MAXTOL, 2000, neff
+        MAXTOL, MAXITER, neff
     )
 
 def test_MDM_300nm_TM4():
@@ -210,7 +210,7 @@ def test_MDM_300nm_TM4():
         1550 * NM, 2.1025, -143.497 - 9.517j, -95.92 - 10.97j, 300 * NM,
         emm.Polarization.TM, emm.Parity.EVEN,
         emm.ModeType.DIELECTRIC_STRONG, 2, 1.0,
-        MAXTOL, 2000, neff
+        MAXTOL, MAXITER, neff
     )
 
 def test_MDM_300nm_TM5():
@@ -222,7 +222,25 @@ def test_MDM_300nm_TM5():
         1550 * NM, 2.1025, -143.497 - 9.517j, -95.92 - 10.97j, 300 * NM,
         emm.Polarization.TM, emm.Parity.ODD,
         emm.ModeType.DIELECTRIC_STRONG, 2, 1.0,
-        MAXTOL, 2000, neff
+        MAXTOL, MAXITER, neff
+    )
+
+def test_DMD_50nm_plasmon():
+    neff = 1.461063388390511 - 0.0008056177063499773j
+    default(
+        1550 * NM, -143.497 - 9.517j, 1.45 ** 2, 1.0, 50 * NM,
+        emm.Polarization.TM, emm.Parity.ODD,
+        emm.ModeType.DMD, 0, 1. - 1j,
+        MAXTOL, MAXITER, neff
+    )
+
+def test_DMD_100nm_low_energy_plasmon():
+    neff = 1.461063388390511 - 0.0008056177063499773j
+    default(
+        1550 * NM, -143.497 - 9.517j, 1.45**2, 1.45**2, 100 * NM,
+        emm.Polarization.TM, emm.Parity.EVEN,
+        emm.ModeType.DMD, 0, 1.46-0.0001j,
+        MAXTOL, 1000, neff
     )
 
 if __name__ == '__main__':
@@ -239,4 +257,5 @@ if __name__ == '__main__':
     # test_MDM_gap_plasmon_even()
     # test_MDM_gap_plasmon_even_3um()
     # test_MDM_gap_plasmon_odd_3um()    
-    test_MDM_3um_gap_TM1()
+    # test_MDM_3um_gap_TM1()
+    test_DMD_100nm_low_energy_plasmon()

@@ -6,7 +6,7 @@ lambda0 = 1550 * nm
 k0 = 2 * np.pi / lambda0
 from IPython import embed
 
-def dielectric_strong(core_thickness, eps_core, eps_cover, eps_substr
+def dielectric_strong(core_thickness, eps_core, eps_cover, eps_substr,
                       mode_index, mode_parity, max_tol, max_iter, nguess):
     h = core_thickness
     ef = eps_core
@@ -83,7 +83,52 @@ def MDM():
         
         niter += 1    
 
+def DMD():
+    h = 50 * nm
+    ef = -143.497 - 9.517j
+    es = 1.0
+    ec = 1.45 ** 2
+    Qc = k0 * np.emath.sqrt(ec - ef)
+    Qs = k0 * np.emath.sqrt(es - ef)
+    p = ef / ec
+    q = ef / es
+
+    tol = np.inf
+    niter = 0
+    maxtol = 1e-16
+    maxiter = 1200
+
+    nguess = 1.0 - 0.1j
+    neff = nguess
+    kappa = k0 * np.emath.sqrt(ef + nguess * nguess)
+    A, B = k0, 0
+
+    while ((tol > maxtol) and (niter < maxiter)):        
+        # core loop for kappa
+        u = kappa
+        t1 = kappa / np.tanh(kappa * h)
+        t2 = kappa / np.sinh(kappa * h)
+
+        a = -t1 - np.sqrt(B ** 2 + t2 ** 2)
+        b = np.emath.sqrt(a ** 2 + kappa ** 2 + 2 * a * t1)
+        v = np.emath.sqrt((a + b) ** 2 / (p ** 2) + Qc ** 2)
+        kappa = v
+
+        xi_c = np.emath.sqrt(kappa ** 2 + Qc ** 2)
+        xi_s = np.emath.sqrt(kappa ** 2 + Qs ** 2)
+        A = (p * xi_c + q * xi_s) / 2.0 
+        B = (p * xi_c - q * xi_s) / 2.0        
+
+        # convergence testing
+        nprev = neff
+        neff = np.emath.sqrt(ef + (kappa ** 2)/(k0 ** 2))
+        tol = np.abs(nprev - neff)
+        print(f'niter->{niter}, neff->{neff}, tol->{tol}')
+        
+        niter += 1    
+
 if __name__ == '__main__':
     # dielectric_strong()
     # MDM()
+    DMD()
 
