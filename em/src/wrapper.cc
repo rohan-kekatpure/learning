@@ -1,123 +1,172 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
+#include <pybind11/stl.h>
 #include "slab.h"
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(emm, m) {
-    m.doc() = "Three-layer dielectric slab waveguide solver";
+    m.doc() = "Electromagnetics module";
+    //submodule slab
+    py::module_ slab_m = m.def_submodule("slab", "Solver functions for 1D Slab waveguides");
 
-    py::enum_<Polarization>(m, "Polarization")
-        .value("TE", Polarization::TE)
-        .value("TM", Polarization::TM)
+    // polarization states
+    py::enum_<slab::Polarization>(slab_m, "Polarization", "Light polarization state")
+        .value("TE", slab::Polarization::TE)
+        .value("TM", slab::Polarization::TM)
         .export_values();
-    
-    py::enum_<Parity>(m, "Parity")
-        .value("ODD", Parity::ODD)
-        .value("EVEN", Parity::EVEN);
 
-    py::enum_<ModeType>(m, "ModeType")
-        .value("DIELECTRIC_STRONG", ModeType::DIELECTRIC_STRONG)
-        .value("DIELECTRIC_WEAK", ModeType::DIELECTRIC_WEAK)        
-        .value("DMD", ModeType::DMD)
-        .value("MDM", ModeType::MDM);
+    // Mode parity
+    py::enum_<slab::Parity>(slab_m, "Parity", "Mode field parity profile")
+        .value("ODD", slab::Parity::ODD)
+        .value("EVEN", slab::Parity::EVEN)
+        .export_values();
 
-    py::class_<Waveguide>(m, "Waveguide")
-        .def(py::init<double, Scalar, Scalar, Scalar>(),
-            py::arg("core_thickness") = 1 * UM,
-            py::arg("core_eps") = Scalar(3.5 * 3.5),
-            py::arg("cover_eps") = Scalar(1.0),
-            py::arg("substr_eps") = Scalar(1.5 * 1.5)
-        )
-        // Read-write attributes
-        .def_readwrite("core_thickness", &Waveguide::coreThickness)
-        .def_readwrite("core_eps", &Waveguide::coreEps)
-        .def_readwrite("cover_eps", &Waveguide::coverEps)
-        .def_readwrite("substr_eps", &Waveguide::substrEps)
-        .def("__repr__", [](const Waveguide& w) {
-            return "<Waveguide core_thickness=" + std::to_string(w.coreThickness) + ">";
+    // Solution type
+    py::enum_<slab::ModeType>(slab_m, "ModeType", "Waveguide physical regime")
+        .value("DIELECTRIC_STRONG", slab::ModeType::DIELECTRIC_STRONG)
+        .value("DIELECTRIC_WEAK", slab::ModeType::DIELECTRIC_WEAK)
+        .value("DMD", slab::ModeType::DMD)
+        .value("MDM", slab::ModeType::MDM)
+        .export_values();
+
+    py::class_<slab::Solution>(slab_m, "Solution", "Convergence data and solved effective index")
+        .def(py::init<>(), "Default constructor")
+        .def(py::init<slab::Real, unsigned int, bool, bool, slab::Scalar>(),
+             py::arg("tol"), py::arg("niter"), py::arg("converged"),
+             py::arg("max_iter_reached"), py::arg("effective_index"),
+             "Explicit parameter constructor")
+        .def_readwrite("effective_index", &slab::Solution::effectiveIndex)
+        .def_readwrite("tol", &slab::Solution::tol)
+        .def_readwrite("niter", &slab::Solution::niter)
+        .def_readwrite("converged", &slab::Solution::converged)
+        .def_readwrite("max_iter_reached", &slab::Solution::maxIterReached)
+        .def("__repr__", [](const slab::Solution& s) {
+            return "<slab.Solution neff=(" + 
+                   std::to_string(s.effectiveIndex.real()) + 
+                   (s.effectiveIndex.imag() >= 0 ? "+" : "") + 
+                   std::to_string(s.effectiveIndex.imag()) + "j)" +
+                   ", converged=" + (s.converged ? "True" : "False") +
+                   ", niter=" + std::to_string(s.niter) +
+                   ", tol=" + std::to_string(s.tol) + ">";
         });
 
-    py::class_<ModeOptions>(m, "ModeOptions")
-        .def(py::init<>())
-        
-        .def(py::init<double, Polarization, Parity, ModeType, unsigned int, Scalar>(),
-            py::arg("lambda0") = 1550 * NM,
-            py::arg("polarization") = Polarization::TE,
-            py::arg("parity") = Parity::EVEN,
-            py::arg("type") = ModeType::DIELECTRIC_STRONG,
-            py::arg("index") = 0,
-            py::arg("effective_index_guess") = Scalar(1.1)
-        )
 
-        .def_readwrite("lambda0", &ModeOptions::lambda0)
-        .def_readwrite("polarization", &ModeOptions::polarization)
-        .def_readwrite("parity", &ModeOptions::parity)
-        .def_readwrite("type", &ModeOptions::type)
-        .def_readwrite("index", &ModeOptions::index)
-        .def_readwrite("effective_index_guess", &ModeOptions::effectiveIndexGuess)
+    // 1. Dielectric Strong
+    slab_m.def("solve_d_strong", &slab::solveDStrong,
+        py::kw_only(),
+        py::arg("lambda0"),
+        py::arg("h"),
+        py::arg("eps_core"),
+        py::arg("eps_cover"),
+        py::arg("eps_substr"),
+        py::arg("pol"),
+        py::arg("mode_index"),
+        py::arg("parity"),
+        py::arg("neff_guess"),
+        py::arg("max_tol") = 1e-16,
+        py::arg("max_iter") = 100,
+        "Solve asymmetric strongly guided dielectric waveguide mode"
+    );
 
-        .def("__repr__", [](const ModeOptions& opts) {
-            return "<ModeOptions lambda0=" + std::to_string(opts.lambda0) + 
-                   " index=" + std::to_string(opts.index) + ">";
-        });        
+    slab_m.def("solve_d_strong_sym", &slab::solveDStrongSym,
+        py::kw_only(),
+        py::arg("lambda0"),
+        py::arg("h"),
+        py::arg("eps_core"),
+        py::arg("eps_clad"),
+        py::arg("pol"),
+        py::arg("mode_index"),
+        py::arg("parity"),
+        py::arg("neff_guess"),
+        py::arg("max_tol") = 1e-16,
+        py::arg("max_iter") = 100,
+        "Solve symmetric strongly guided dielectric waveguide mode"
+    );
 
-    py::class_<SolverOptions>(m, "SolverOptions")
-        .def(py::init<>())
+    // 2. Dielectric Weak
+    slab_m.def("solve_d_weak", &slab::solveDWeak,
+        py::kw_only(),
+        py::arg("lambda0"),
+        py::arg("h"),
+        py::arg("eps_core"),
+        py::arg("eps_cover"),
+        py::arg("eps_substr"),
+        py::arg("pol"),
+        py::arg("parity"),
+        py::arg("neff_guess"),
+        py::arg("max_tol") = 1e-16,
+        py::arg("max_iter") = 100,
+        "Solve asymmetric weakly guided dielectric waveguide mode"
+    );
 
-        .def(py::init<double, double>(),
-            py::arg("max_tol") = 1e-6,
-            py::arg("max_iter") = 1000.0
-        )
+    slab_m.def("solve_d_weak_sym", &slab::solveDWeakSym,
+        py::kw_only(),
+        py::arg("lambda0"),
+        py::arg("h"),
+        py::arg("eps_core"),
+        py::arg("eps_clad"),
+        py::arg("pol"),
+        py::arg("mode_index"),
+        py::arg("parity"),
+        py::arg("neff_guess"),
+        py::arg("max_tol") = 1e-16,
+        py::arg("max_iter") = 100,
+        "Solve symmetric weakly guided dielectric waveguide mode"
+    );
 
-        .def_readwrite("max_tol", &SolverOptions::maxTol)
-        .def_readwrite("max_iter", &SolverOptions::maxIter)
+    slab_m.def("solve_mdm", &slab::solveMDM,
+        py::kw_only(),
+        py::arg("lambda0"),
+        py::arg("h"),
+        py::arg("eps_core"),
+        py::arg("eps_cover"),
+        py::arg("eps_substr"),
+        py::arg("parity"),
+        py::arg("neff_guess"),
+        py::arg("max_tol") = 1e-16,
+        py::arg("max_iter") = 100,
+        "Solve asymmetric Metal-Dielectric-Metal plasmonic waveguide mode"
+    );
 
-        .def("__repr__", [](const SolverOptions& opt) {
-            return "<SolverOptions max_tol=" + std::to_string(opt.maxTol) +
-                   " max_iter=" + std::to_string(opt.maxIter) + ">";
-        });        
+    slab_m.def("solve_mdm_sym", &slab::solveMDMSym,
+        py::kw_only(),
+        py::arg("lambda0"),
+        py::arg("h"),
+        py::arg("eps_core"),
+        py::arg("eps_clad"),
+        py::arg("parity"),
+        py::arg("neff_guess"),
+        py::arg("max_tol") = 1e-16,
+        py::arg("max_iter") = 100,
+        "Solve symmetric Metal-Dielectric-Metal plasmonic waveguide mode"
+    );
 
-    py::class_<Solution>(m, "Solution")
-        .def(py::init<>())
+    // 4. Plasmonic DMD
+    slab_m.def("solve_dmd", &slab::solveDMD,
+        py::kw_only(),
+        py::arg("lambda0"),
+        py::arg("h"),
+        py::arg("eps_core"),
+        py::arg("eps_cover"),
+        py::arg("eps_substr"),
+        py::arg("parity"),
+        py::arg("neff_guess"),
+        py::arg("max_tol") = 1e-16,
+        py::arg("max_iter") = 100,
+        "Solve asymmetric Dielectric-Metal-Dielectric plasmonic waveguide mode"
+    );
 
-        .def(py::init<double, unsigned int, bool, bool, Scalar>(),
-            py::arg("tol") = std::numeric_limits<double>::infinity(),
-            py::arg("niter") = 0,
-            py::arg("converged") = false,
-            py::arg("max_iter_reached") = false,
-            py::arg("effectiveIndex") = Scalar(1.0)
-        )
-        .def_readonly("effectiveIndex", &Solution::effectiveIndex)
-        .def_readonly("tol", &Solution::tol)
-        .def_readonly("niter", &Solution::niter)
-        .def_readonly("converged", &Solution::converged)
-        .def_readonly("max_iter_reached", &Solution::maxIterReached)
-        .def("__repr__", [](const Solution& sol) {
-            std::string status = sol.converged ? "Converged" : "Failed";
-            return "<Solution status=" + status + 
-                   " niter=" + std::to_string(sol.niter) + 
-                   " tol=" + std::to_string(sol.tol) + ">";
-        });    
-
-    py::class_<Solver>(m, "Solver")
-        .def(py::init<Waveguide, SolverOptions, ModeOptions>(),
-            py::arg("waveguide"),
-            py::arg("solver_options"),
-            py::arg("mode_options")
-        )
-
-        .def("solve", &Solver::solve, 
-             "Executes the solver pipeline and returns a Solution struct.")
-
-        // Read-only access to the public 'solution' member reference
-        // py::return_value_policy::reference_internal ties the lifetime of 
-        // the returned solution to the Solver instance to avoid dangling pointers.
-        .def_property_readonly("solution", 
-            [](const Solver& self) -> const Solution& {
-                return self.solution;
-            },
-            py::return_value_policy::reference_internal,
-            "Read-only access to the current Solution state."
-        );        
+    slab_m.def("solve_dmd_sym", &slab::solveDMDSym,
+        py::kw_only(),
+        py::arg("lambda0"),
+        py::arg("h"),
+        py::arg("eps_core"),
+        py::arg("eps_clad"),
+        py::arg("parity"),
+        py::arg("neff_guess"),
+        py::arg("max_tol") = 1e-16,
+        py::arg("max_iter") = 100,
+        "Solve symmetric Dielectric-Metal-Dielectric plasmonic waveguide mode"
+    );
 }

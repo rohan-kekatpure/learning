@@ -235,7 +235,7 @@ def test_DMD_50nm_plasmon():
     )
 
 def test_DMD_100nm_low_energy_plasmon():
-    neff = 1.461063388390511 - 0.0008056177063499773j
+    neff = 1.4603853489134264 - 0.0006469974919998885j
     default(
         1550 * NM, -143.497 - 9.517j, 1.45**2, 1.45**2, 100 * NM,
         emm.Polarization.TM, emm.Parity.EVEN,

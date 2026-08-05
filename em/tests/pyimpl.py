@@ -84,9 +84,9 @@ def MDM():
         niter += 1    
 
 def DMD():
-    h = 50 * nm
+    h = 100 * nm
     ef = -143.497 - 9.517j
-    es = 1.0
+    es = 1.45 ** 2
     ec = 1.45 ** 2
     Qc = k0 * np.emath.sqrt(ec - ef)
     Qs = k0 * np.emath.sqrt(es - ef)
@@ -98,7 +98,7 @@ def DMD():
     maxtol = 1e-16
     maxiter = 1200
 
-    nguess = 1.0 - 0.1j
+    nguess = 1.46 - 0.0007j
     neff = nguess
     kappa = k0 * np.emath.sqrt(ef + nguess * nguess)
     A, B = k0, 0
@@ -112,10 +112,10 @@ def DMD():
         a = -t1 - np.sqrt(B ** 2 + t2 ** 2)
         b = np.emath.sqrt(a ** 2 + kappa ** 2 + 2 * a * t1)
         v = np.emath.sqrt((a + b) ** 2 / (p ** 2) + Qc ** 2)
-        kappa = v
+        kappa = 0.5 * (u + v)
 
-        xi_c = np.emath.sqrt(kappa ** 2 + Qc ** 2)
-        xi_s = np.emath.sqrt(kappa ** 2 + Qs ** 2)
+        xi_c = np.emath.sqrt(kappa ** 2 - Qc ** 2)
+        xi_s = np.emath.sqrt(kappa ** 2 - Qs ** 2)
         A = (p * xi_c + q * xi_s) / 2.0 
         B = (p * xi_c - q * xi_s) / 2.0        
 
@@ -127,8 +127,82 @@ def DMD():
         
         niter += 1    
 
+def DMD_symmetric():
+    h = 100 * nm
+    ef = -143.49 - 9.517j
+    ec = 1.45 ** 2
+    Qc = k0 * np.emath.sqrt(ec - ef)
+    p = ef / ec
+
+    tol = np.inf
+    niter = 0
+    maxtol = 1e-16
+    maxiter = 1200
+
+    nguess = 1.0 - 0.1j
+    neff = nguess
+    kappa = k0 * np.emath.sqrt(ef + nguess * nguess)
+    mode = 'ODD'
+
+    while ((tol > maxtol) and (niter < maxiter)):        
+        # core loop for kappa
+        u = kappa
+        if mode == 'EVEN':
+            t1 = np.tanh(kappa * h / 2.) / p
+        else:
+            t1 = 1.0 / (p * np.tanh(kappa * h / 2.))
+
+        v = Qc / np.emath.sqrt(1.0 - t1 ** 2)
+        kappa = 0.5 * (u + v)
+
+        # convergence testing
+        nprev = neff
+        neff = np.emath.sqrt(ef + (kappa ** 2)/(k0 ** 2))
+        tol = np.abs(nprev - neff)
+        print(f'niter->{niter}, neff->{neff}, tol->{tol}')
+        
+        niter += 1
+
+def DMD2():
+    h = 100 * nm
+    ef = -143.497 - 9.517j
+    ec = 1.45 ** 2
+    es = 1.45 ** 2
+    tol = np.inf
+    niter = 0
+    maxtol = 1e-16
+    maxiter = 1000
+
+    Kc = k0 * np.emath.sqrt(ef - ec)
+    Ks = k0 * np.emath.sqrt(ef - es)
+    p = ef / ec
+    q = ef / es
+
+    nguess = 1.
+    neff = nguess
+    kappa = k0 * np.emath.sqrt(ef + nguess * nguess)
+    while ((tol > maxtol) and (niter < maxiter)):        
+        # core loop for kappa
+        u = kappa 
+        x = p * np.emath.sqrt(Kc * Kc + kappa * kappa)
+        y = q * np.emath.sqrt(Ks * Ks + kappa * kappa)
+        t = (x + y) / (kappa * kappa + x * y)
+        v = (1 / h) * np.arctanh(t)
+        kappa = 0.5 * (u + v)
+
+        # convergence testing
+        nprev = neff
+        neff = np.emath.sqrt(ef + (kappa / k0) ** 2)
+        tol = np.abs(nprev - neff)
+        print(f'niter->{niter}, neff->{neff}, tol->{tol}')
+        
+        niter += 1    
+
+
 if __name__ == '__main__':
     # dielectric_strong()
     # MDM()
-    DMD()
+    # DMD()
+    # DMD_symmetric()
+    DMD2()
 

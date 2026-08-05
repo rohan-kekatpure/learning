@@ -1,69 +1,21 @@
-# ifndef __SLAB3
-# define  __SLAB3
+# ifndef __SLAB
+# define  __SLAB
 
 #include <complex>
 #include <limits.h>
 #include <numbers>
 
+namespace slab {
 using Real = double;
 using Scalar = std::complex<Real>;
 
-
-constexpr Real UM = 1e-6;
-constexpr Real NM = 1e-9;
-constexpr Real PI = static_cast<Real>(std::numbers::pi);
+constexpr Real PI = std::numbers::pi_v<Real>;
 constexpr Real ONE = 1., TWO = 2., HALF = 0.5;
 constexpr auto INFTY = std::numeric_limits<Real>::infinity();
 
 enum class Polarization {TE, TM};
 enum class Parity {ODD, EVEN};
 enum class ModeType {DIELECTRIC_STRONG, DIELECTRIC_WEAK, DMD, MDM};
-
-struct Waveguide {    
-    Real coreThickness{1 * UM};
-    Scalar coreEps{3.5 * 3.5};
-    Scalar coverEps{1.0};
-    Scalar substrEps{1.5 * 1.5};
-
-    //ctor
-    Waveguide(
-        Real coreThickness, 
-        Scalar coreEps, 
-        Scalar coverEps, 
-        Scalar substrEps
-    ): coreThickness{coreThickness}, coreEps{coreEps}, 
-       coverEps{coverEps}, substrEps{substrEps} {} 
-};
-
-struct ModeOptions {
-    Real lambda0 = 1550 * NM; // vacuum wavelength    
-    Polarization polarization = Polarization::TE;
-    Parity parity = Parity::EVEN;
-    ModeType type = ModeType::DIELECTRIC_STRONG;
-    unsigned int index = 0;
-    Scalar effectiveIndexGuess = 1.1;
-
-    //ctors
-    ModeOptions() {}
-
-    ModeOptions(
-        Real lambda0, Polarization pol, Parity par, 
-        ModeType mt, unsigned int i, Scalar neff0
-    ) 
-    : polarization{pol}, parity{par}, type{mt}, 
-    index{i}, effectiveIndexGuess{neff0} {}
-};
-
-struct SolverOptions {
-    Real maxTol{1e-6};
-    Real maxIter{1000};
-
-    //ctors
-    SolverOptions() {}
-    
-    SolverOptions(Real maxTol, Real maxIter)
-    :maxTol{maxTol}, maxIter{maxIter} {}
-};
 
 struct Solution {
     // converged values
@@ -86,28 +38,104 @@ struct Solution {
 
 };
 
-class Solver {
-    private: 
-    // set and passed by caller
-    Waveguide waveguide;
-    SolverOptions solverOptions;
-    ModeOptions modeOptions;    
-    
-    // struct to store intermediate results
-    Solution sol; // private result; mutable
+Solution solveDStrong(
+    const Real lambda0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsCover, 
+    const Scalar epsSubstr, 
+    const Polarization pol,
+    const unsigned int modeIndex, 
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+);
 
-    // indicator for whether the solver is setup
-    bool isSetup = false;
+Solution solveDStrongSym(
+    const Real lambda0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsClad,
+    const Polarization pol, 
+    const unsigned int modeIndex, 
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+); 
 
-    public:
-    // public readony version of solverContext
-    const Solution& solution; // public result; readonly
+Solution solveDWeak(
+    const Real lambda0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsCover, 
+    const Scalar epsSubstr, 
+    const Polarization pol,
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+);
 
-    Solver(Waveguide wg, SolverOptions sopt, ModeOptions mopt)
-    : waveguide{wg}, solverOptions{sopt}, modeOptions{mopt}, solution(sol) {}
+Solution solveDWeakSym(
+    const Real lambda0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsClad,
+    const Polarization pol, 
+    const unsigned int modeIndex, 
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+);
 
-    Solution solve();
-    
-};
+Solution solveMDM(
+    const Real lambda0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsCover, 
+    const Scalar epsSubstr, 
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+);
 
+Solution solveMDMSym(
+    const Real lambda0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsClad,
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+);
+
+Solution solveDMD(
+    const Real lambda0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsCover, 
+    const Scalar epsSubstr, 
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+);
+
+Solution solveDMDSym(
+    const Real lambda0, 
+    const Real h, 
+    const Scalar epsCore, 
+    const Scalar epsClad,
+    const Parity parity, 
+    const Scalar neffGuess, 
+    const Real maxTol, 
+    const unsigned int maxIter
+);
+
+} // namespace slab
 #endif
