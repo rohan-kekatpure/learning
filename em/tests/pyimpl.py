@@ -72,7 +72,7 @@ def MDM():
         S = 0.5 * (p * alphac + q * alphas)
         t1 = S / np.tanh(kappa * h)
         t2 = np.emath.sqrt(p * q * alphac * alphas)
-        v = -t1 - np.emath.sqrt((t1 + t2) * (t1 - t2))        
+        v = -t1 + np.emath.sqrt((t1 + t2) * (t1 - t2))        
         kappa = (u + v) / 2.0
 
         # convergence testing
@@ -201,8 +201,8 @@ def DMD2():
 
 if __name__ == '__main__':
     # dielectric_strong()
-    # MDM()
+    MDM()
     # DMD()
     # DMD_symmetric()
-    DMD2()
+    # DMD2()
 
