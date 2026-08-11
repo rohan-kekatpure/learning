@@ -291,7 +291,7 @@ def test_dielectric_weak_sym_TM_even():
         neff_guess=1.0, max_tol=1e-16, max_iter=100
     )
 
-def test_MDM_50nm_gap_plasmon():
+def test_MDM_symmetric_50nm_gap_plasmon():
     default(
         solver=emm.slab.solve_mdm_sym, 
         neff_true=1.9660357596156883-0.015421133552370401j,
@@ -300,7 +300,7 @@ def test_MDM_50nm_gap_plasmon():
         max_tol=1e-16, max_iter=100
     )
 
-def test_MDM_3um_gap_plasmon_even():
+def test_MDM_symmetric_3um_gap_plasmon_even():
     default(
         solver=emm.slab.solve_mdm_sym, 
         neff_true=1.4697636802205067-0.001743157363667023j,
@@ -309,26 +309,9 @@ def test_MDM_3um_gap_plasmon_even():
         max_tol=1e-16, max_iter=100
     )
 
-def test_MDM_3um_gap_plasmon_odd():
+def test_MDM_symmetric_3um_gap_plasmon_odd():
     h = 1000 * NM
     eps_gap = eps_Si
-    default(
-        solver=emm.slab.solve_mdm, 
-        neff_true=3.666521776733708-0.01067212473304136j,
-        lambda0=1550*NM, h=h, eps_core=eps_gap,
-        eps_cover=eps_Ag, eps_substr=eps_Ag,
-        parity=emm.slab.Parity.EVEN, neff_guess=3.5 - 0.01j, 
-        max_tol=1e-16, max_iter=1000
-    )
-
-    default(
-        solver=emm.slab.solve_mdm_sym, 
-        neff_true=3.666521776733705-0.010672124733040961j,
-        lambda0=1550*NM, h=h, eps_core=eps_gap,
-        eps_clad=eps_Ag, parity=emm.slab.Parity.EVEN, neff_guess=3.5 - 0.01j, 
-        max_tol=1e-16, max_iter=1000
-    )
-
     default(
         solver=emm.slab.solve_mdm, 
         neff_true=3.649771271471782-0.012172950643379398j,
@@ -345,6 +328,25 @@ def test_MDM_3um_gap_plasmon_odd():
         eps_clad=eps_Ag, parity=emm.slab.Parity.ODD, neff_guess=3.5 - 0.01j, 
         max_tol=1e-16, max_iter=100
     )
+
+def test_DMD_symmetric_low_energy_mode():
+    default(
+        solver=emm.slab.solve_dmd_sym, 
+        neff_true=1.4603853489834768-0.0006469971794289663j,
+        lambda0=1550*NM, h=100*NM, eps_core=eps_Ag, 
+        eps_clad=eps_SiO2, parity=emm.slab.Parity.EVEN,
+        neff_guess=1.0 - 0.1j, max_tol=1e-16, max_iter=100
+    )
+
+def test_DMD_symmetric_high_energy_mode():
+    default(
+        solver=emm.slab.solve_dmd_sym, 
+        neff_true=1.4610088512387682-0.0007906976026164774j,
+        lambda0=1550*NM, h=100*NM, eps_core=eps_Ag, 
+        eps_clad=eps_SiO2, parity=emm.slab.Parity.ODD,
+        neff_guess=1.0 - 0.1j, max_tol=1e-16, max_iter=100
+    )
+
 
 def main():
     # test_dielectric_strong_TE0()
@@ -375,6 +377,9 @@ def main():
     # test_dielectric_weak_sym_TM_odd()
     # test_MDM_50nm_gap_plasmon()
     # test_MDM_3um_gap_plasmon_even()
-    test_MDM_3um_gap_plasmon_odd()    
+    # test_MDM_3um_gap_plasmon_odd()    
+    # test_DMD_symmetric_low_energy_mode()
+    test_DMD_symmetric_high_energy_mode()
+
 if __name__ == '__main__':
     main()

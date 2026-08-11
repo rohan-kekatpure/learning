@@ -440,27 +440,28 @@ Solution solveDMDSym(
     const auto Qc = k0 * std::sqrt(epsClad - epsCore);
     auto kappa = k0 * std::sqrt(epsCore - neffGuess * neffGuess);
     const Scalar p = epsCore / epsClad;
-    Scalar neffPrev, u, v, t;
+    Scalar neffPrev, u, v, r, t;
     Solution s{};
 
     // core loop
     while ((s.tol > maxTol) && (s.niter < maxIter)) {
         // core loop
         u = kappa;
+        t = std::tanh(kappa * h / TWO);
         if (parity == Parity::EVEN) {
-            t = (ONE / p) * std::tanh(kappa * h / TWO);            
+            r = t / p ;            
         }
         else if (parity == Parity::ODD) {
-            t = (ONE / p) / std::tanh(kappa * h / TWO);            
+            r = ONE/(t * p);            
         } else {
             throw(std::invalid_argument("Parity must be Parity::EVEN or Parity::ODD\n"));
         }
-        v = Qc / std::sqrt(ONE - t * t);
+        v = Qc / std::sqrt(ONE - r * r);
         kappa = HALF * (u + v);
 
         // Convergence testing 
         neffPrev = s.effectiveIndex;
-        s.effectiveIndex = std::sqrt(epsCore - (kappa * kappa) / (k0 * k0));
+        s.effectiveIndex = std::sqrt(epsCore + (kappa * kappa) / (k0 * k0));
         s.tol = std::abs(s.effectiveIndex - neffPrev);
         s.niter++;
     }
