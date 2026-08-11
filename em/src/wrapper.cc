@@ -107,7 +107,6 @@ PYBIND11_MODULE(emm, m) {
         py::arg("eps_core"),
         py::arg("eps_clad"),
         py::arg("pol"),
-        py::arg("mode_index"),
         py::arg("parity"),
         py::arg("neff_guess"),
         py::arg("max_tol") = 1e-16,

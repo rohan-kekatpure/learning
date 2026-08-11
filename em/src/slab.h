@@ -84,7 +84,6 @@ Solution solveDWeakSym(
     const Scalar epsCore, 
     const Scalar epsClad,
     const Polarization pol, 
-    const unsigned int modeIndex, 
     const Parity parity, 
     const Scalar neffGuess, 
     const Real maxTol, 

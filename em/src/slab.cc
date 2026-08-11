@@ -214,7 +214,6 @@ Solution solveDWeakSym(
     const Scalar epsCore, 
     const Scalar epsClad,
     const Polarization pol, 
-    const unsigned int modeIndex, 
     const Parity parity, 
     const Scalar neffGuess, 
     const Real maxTol, 
@@ -224,7 +223,6 @@ Solution solveDWeakSym(
     const auto k0 = TWO * PI / lambda0;    
     const auto Kc = k0 * std::sqrt(epsCore - epsClad);
     auto k = k0 * std::sqrt(epsCore - neffGuess * neffGuess);
-    const auto M = modeIndex;
     Scalar neffPrev, u, v, t, w;
     const auto p = pol == Polarization::TE ? ONE : epsCore/epsClad;
     Solution s{};
@@ -337,13 +335,16 @@ Solution solveMDMSym(
     while ((s.tol > maxTol) && (s.niter < maxIter)) {
         // core loop
         u = kappa;
-        pk = std::sqrt(kappa * kappa + Kc * Kc);
-        t = std::tanh(kappa * h);
+        pk = p * std::sqrt(kappa * kappa + Kc * Kc);
+        t = std::tanh(kappa * h / TWO);
+
+        // The ODD even switch is reverse to that in the paper.
+        // The paper contains an error.
         if (parity == Parity::EVEN) {
-            v = -pk * t;
+            v = -pk / t;
         }
         else if (parity == Parity::ODD) {
-            v = -pk / t;
+            v = -pk * t;
         } else {
             throw(std::invalid_argument("Parity must be Parity::EVEN or Parity::ODD\n"));
         }
@@ -352,7 +353,7 @@ Solution solveMDMSym(
 
         // Convergence testing 
         neffPrev = s.effectiveIndex;
-        s.effectiveIndex = std::sqrt(epsCore - (kappa * kappa) / (k0 * k0));
+        s.effectiveIndex = std::sqrt(epsCore + (kappa * kappa) / (k0 * k0));
         s.tol = std::abs(s.effectiveIndex - neffPrev);
         s.niter++;
     }
